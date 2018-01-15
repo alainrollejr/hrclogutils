@@ -129,6 +129,32 @@ def plot_sof(df, *arg):  # argument is list of headers to be plotted
     plt.legend(loc='best')  
     ax.yaxis.grid() # horizontal lines
     ax.xaxis.grid() # vertical lines 
-    plt.show()    
+    plt.show()  
+    
+    # general purpose tool to plot column(s) from the log vs SOF time   
+def plot_xcor(df, *arg):  # argument is list of the 2 headers to be plotted vs each other
+    colString = ''; 
+    for i in range(len(arg)):
+        colString += arg[i]+" "
+ 
+    dfSubset = df.loc[:,colString.split()];
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after plotting  
+    
+
+    x = dfSubset[arg[0]].values      
+    y = dfSubset[arg[1]].values
+    
+    fig, ax = plt.subplots()
+    
+    plt.scatter(x.astype(float),y.astype(np.float)) 
+    
+    plt.xlabel(arg[0])
+    plt.ylabel(arg[1])
+    plt.legend(loc='best')  
+    ax.yaxis.grid() # horizontal lines
+    ax.xaxis.grid() # vertical lines 
+    plt.show()
 
 	

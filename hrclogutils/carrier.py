@@ -7,6 +7,7 @@ Created on Mon Jan 15 15:42:42 2018
 import numpy as np
 import hrclogutils.basic as hrc
 
+
 # load the rtce log (Real Time Channel Estimator log) into a python pandas dataframe
 def load_carrier_log(path="./sbc_carrier_tracking_monitor.csv",
                      header_path="./sbc_carrier_tracking_monitor.headers"):
@@ -18,7 +19,7 @@ def filter_terminal(df, idsubstring):
     return df[df['terminal'].str.contains(idsubstring)]
 
 
-def error_analysis(idsubstring,    # only mandatory parameter               
+def packet_error_analysis(idsubstring,    # only mandatory parameter               
                    path="./sbc_carrier_tracking_monitor.csv",
                    header_path="./sbc_carrier_tracking_monitor.headers", 
                    startDateTime="1977-06-02T13:45:30",
@@ -38,8 +39,21 @@ def error_analysis(idsubstring,    # only mandatory parameter
     
     vPerProcent = 100.0 * (vTot.astype(np.float) - vDec.astype(np.float))/vTot.astype(np.float)
     
-    dfSubset['perProcent'] = vPerProcent
-    
-    print(dfSubset.head())
+    # errored packets from frame N are reported in frame N+2
+    dfSubset['perProcent'] = np.roll(vPerProcent,-2)
+        
+    print(dfSubset.tail())
     
     dfSubset.pipe(hrc.plot_utc_sof,'perProcent')
+    
+    # create a list with columns worth retaining for a crosscorrelation
+    dfCrossList = ['curEsNo(dB)','curFreqErrorPreamble','curSymbolRateTimingErrorPreamble','agcFailure',
+                   'modcod','chipRateMultiplicator','spreadingFactor',
+                   'agcFailure']    
+        
+    for h in dfCrossList:       
+        dfSubset.pipe(hrc.plot_xcor,h,'perProcent')   
+    
+    
+    
+    

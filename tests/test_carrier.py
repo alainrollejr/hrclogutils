@@ -12,4 +12,4 @@ import hrclogutils.carrier as carrier
 
 idsubstring = '15843'
 
-carrier.error_analysis(idsubstring,startDateTime="2018-01-15T11:23:59")
+carrier.packet_error_analysis(idsubstring,startDateTime="2018-01-15T11:23:59")
