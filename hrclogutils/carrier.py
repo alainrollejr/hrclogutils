@@ -4,6 +4,7 @@ Created on Mon Jan 15 15:42:42 2018
 
 @author: aro
 """
+import pandas as pd
 import numpy as np
 import hrclogutils.basic as hrc
 
@@ -51,7 +52,39 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
                    'agcFailure']    
         
     for h in dfCrossList:       
-        dfSubset.pipe(hrc.plot_xcor,h,'perProcent')   
+        dfSubset.pipe(hrc.plot_xcor,h,'perProcent')  
+        
+def terminal_averages(df, *arg):  # argument is list of columns to be evaluated (averaged) for the terminal overview
+    colString = 'terminal '; 
+    for i in range(len(arg)):
+        colString += arg[i]+" "
+ 
+    dfSubset = df.loc[:,colString.split()];
+    
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after plotting
+    
+    for i in range(len(arg)):
+        dfSubset[arg[i]] = dfSubset[arg[i]].astype(float)
+    
+    return pd.pivot_table(dfSubset,index=["terminal"],values=arg)
+
+def terminal_minmax(df, *arg):  # argument is list of columns to be evaluated (averaged) for the terminal overview
+    colString = 'terminal '; 
+    for i in range(len(arg)):
+        colString += arg[i]+" "
+ 
+    dfSubset = df.loc[:,colString.split()];
+    
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after plotting
+    
+    for i in range(len(arg)):
+        dfSubset[arg[i]] = dfSubset[arg[i]].astype(float)
+    
+    return pd.pivot_table(dfSubset,index=["terminal"],values=arg,aggfunc=[np.min, np.max])
     
     
     
