@@ -86,7 +86,8 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     
     
     plt.legend(loc='best') 
-    plt.grid()    
+    ax.yaxis.grid() # horizontal lines
+    ax.xaxis.grid() # vertical lines   
     plt.show()    
     
 # general purpose tool to plot column(s) from the log vs UTC time
@@ -110,7 +111,8 @@ def plot_utc(df, *arg): # argument is list of headers to be plotted
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
     plt.xlabel('time (UTC)')   
     plt.legend(loc='best') 
-    plt.grid()    
+    ax.yaxis.grid() # horizontal lines
+    ax.xaxis.grid() # vertical lines     
     plt.show() 
 
 # general purpose tool to plot column(s) from the log vs SOF time   
@@ -136,7 +138,8 @@ def plot_sof(df, *arg):  # argument is list of headers to be plotted
     ax.ticklabel_format(useOffset=False)
     plt.xlabel('sof time (seconds since boot of PTP master)')
     plt.legend(loc='best')  
-    plt.grid()
+    ax.yaxis.grid() # horizontal lines
+    ax.xaxis.grid() # vertical lines 
     plt.show()    
 
 	
