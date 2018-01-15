@@ -20,7 +20,7 @@ df = df.pipe(hrc.filter_name,terminal_id).pipe(hrc.filter_loggedon)
 
 print(df.head())
 
-print(df.info()) # gives idea what can be asked to plot
+print(df.info()) # gives an idea what can be asked to plot
 
 df.pipe(hrc.plot_utc_sof,'Next.TxPSD','txPsdLimit')
 
