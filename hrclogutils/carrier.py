@@ -40,9 +40,8 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
     vPerProcent = 100.0 * (vTot.astype(np.float) - vDec.astype(np.float))/vTot.astype(np.float)
     
     # errored packets from frame N are reported in frame N+2
-    dfSubset['perProcent'] = np.roll(vPerProcent,-2)
-        
-    print(dfSubset.tail())
+    dfSubset['perProcent'] = np.roll(vPerProcent,-2)       
+   
     
     dfSubset.pipe(hrc.plot_utc_sof,'perProcent')
     
