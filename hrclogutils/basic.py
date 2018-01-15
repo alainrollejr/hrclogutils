@@ -34,26 +34,15 @@ def load_csv_log(path,header_path):
     df['dateTimes'] = pd.to_datetime(df['utc'], format='%Y%m%dT%H%M%S.%f')
     return df
 
-# load the rtce log (Real Time Channel Estimator log) into a python pandas dataframe
-def load_rtce_log(rtce_path="./sbc_rtce_monitor.csv",rtce_header_path="./sbc_rtce_monitor.headers"):
-    df = load_csv_log(rtce_path,rtce_header_path)
-    # enhance with some derived columns
-    #df['SCH.allocatedRate'] =  df['SCH.Sr'].values.astype(np.float) * df['SCH.Mc'].values.astype(np.float)
-    return df;
 
-# filter on terminal id, id should be the 'xyz' string found in 'terminal_xyz'
-def filter_name(df, idsubstring): 
-    return df[df['name'].str.contains(idsubstring)]
 
 # filter on a time episode. Start is in past (my birthday) and Stop when I'll be dead, so you can omit either of them
-def filter_utc(df,startDateTime="1977-06-02T13:45:30",stopDateTime="3000-06-15T13:45:30"):
+def filter_utc(df,startDateTime="1977-06-02T13:45:30",stopDateTime="2200-06-15T13:45:30"):
     startDateTimeParsed = parse(startDateTime)
     stopDateTimeParsed = parse(stopDateTime)
     return df[(df['dateTimes'] >= startDateTimeParsed) & (df['dateTimes'] <= stopDateTimeParsed)]
 
-# filter on episodes where terminals are logged on or at least sending power above noise. 
-def filter_loggedon(df):
-    return df[df['MCD.Signal'].str.contains('Ok')]	
+
 
 # general purpose tool to plot column(s) from the log vs UTC time and SOF time (two x axis)
 def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
@@ -65,7 +54,7 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     dfSubset = df.loc[:,colString.split()];
     dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
     dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
-    dfSubset.reindex(); # reindex after plotting   
+    dfSubset.reindex(); # reindex after dropping   
     
     
     fig, ax = plt.subplots()

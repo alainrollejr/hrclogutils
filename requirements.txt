@@ -1,3 +1,6 @@
+For Ubuntu users:
+------------------
+
 sudo apt-get install python-pip
 sudo pip install wheel
 sudo pip install pandas
@@ -5,3 +8,8 @@ sudo pip install matplotlib
 
 Then, eg:
 python check_powercontrol.py
+
+
+For windows users:
+------------------
+recommended to install Anaconda and use the Spyder IDE for file editing and running

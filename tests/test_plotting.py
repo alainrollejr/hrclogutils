@@ -9,12 +9,13 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import hrclogutils.basic as hrc
+import hrclogutils.rtce as rtce
 
-df = hrc.load_rtce_log()
+df = rtce.load_rtce_log()
 
 
 # filter on terminal_15843, when he is logged on
-df = df.pipe(hrc.filter_name,'15843').pipe(hrc.filter_loggedon)
+df = df.pipe(rtce.filter_name,'15843').pipe(rtce.filter_loggedon)
 
 print(df.head())
 
