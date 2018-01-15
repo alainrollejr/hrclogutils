@@ -42,6 +42,19 @@ def filter_utc(df,startDateTime="1977-06-02T13:45:30",stopDateTime="2200-06-15T1
     stopDateTimeParsed = parse(stopDateTime)
     return df[(df['dateTimes'] >= startDateTimeParsed) & (df['dateTimes'] <= stopDateTimeParsed)]
 
+# general purpose tool to reduce the dataframe to list of columns   
+def reduce(df, *arg):  # argument is list of columns to be retained
+    colString = ''; 
+    for i in range(len(arg)):
+        colString += arg[i]+" "
+ 
+    dfSubset = df.loc[:,colString.split()];
+    
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after plotting    
+    return dfSubset;
+
 
 
 # general purpose tool to plot column(s) from the log vs UTC time and SOF time (two x axis)
@@ -131,7 +144,7 @@ def plot_sof(df, *arg):  # argument is list of headers to be plotted
     ax.xaxis.grid() # vertical lines 
     plt.show()  
     
-    # general purpose tool to plot column(s) from the log vs SOF time   
+# general purpose tool to plot 2 columns from the log vs each other 
 def plot_xcor(df, *arg):  # argument is list of the 2 headers to be plotted vs each other
     colString = ''; 
     for i in range(len(arg)):

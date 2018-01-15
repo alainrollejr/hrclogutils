@@ -21,3 +21,8 @@ print(df.head())
 print(df.tail())
 
 print(df.info()) # gives idea what can be asked to plot
+
+# now further reduce the dataframe and write it to file
+df = df.pipe(hrc.reduce,'MCD.EsNo','MCD.EsNoDo','SCH.Pu')
+
+df.to_csv('reduced_rtce_log.csv')
