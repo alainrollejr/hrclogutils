@@ -1,0 +1,1 @@
+utc,sof,frameCount,terminal,termId,iduPower,centerFrequency(Hz),modcod,chipRateMultiplicator,spreadingFactor,symbolRateMultiplicator,prevDecPackCnt,prevTotPackCnt,curModCod,curSymbRate(Bd),symbolRateOffset,curTimestamp(s),timeOffset(s),curEsNo(dB),curEsNoDo(dB),curCo(dBm/Hz),curCoD(dB),curFreqOffset(Hz),curFreqErrorPreamble,curSymbolRateTimingErrorPreamble,agcFailure

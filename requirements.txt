@@ -1,0 +1,7 @@
+sudo apt-get install python-pip
+sudo pip install wheel
+sudo pip install pandas
+sudo pip install matplotlib
+
+Then, eg:
+python check_powercontrol.py
