@@ -12,6 +12,7 @@ import hrclogutils.basic as hrc
 def load_rtce_log(rtce_path="./sbc_rtce_monitor.csv",rtce_header_path="./sbc_rtce_monitor.headers"):
     df = hrc.load_csv_log(rtce_path,rtce_header_path)
     # enhance with some derived columns
+    tmp, df['id'] = df['name'].str.split('_', 1).str    
     #df['SCH.Sr'] = df['SCH.Sr'].astype(float)
     #df['SCH.Mc'] = df['SCH.Mc'].astype(float)
     #df['SCH.allocatedRate'] =  0.1*df['SCH.Sr'] * df['SCH.Mc']
@@ -25,6 +26,10 @@ def filter_name(df, idsubstring):
 # filter on episodes where terminals are logged on or at least sending power above noise. 
 def filter_loggedon(df):
     return df[df['MCD.Signal'].str.contains('Ok')]	
+
+# filter on episodes where terminals are logged on or at least sending power above noise. 
+def filter_loggingon(df):
+    return df[df['SCH.Mc'].str.contains('InvalidModcod')]	
 
 def terminal_averages(df, *arg):  # argument is list of columns to be evaluated (averaged) for the terminal overview
     colString = 'name '; 
