@@ -73,7 +73,7 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     fig, ax = plt.subplots()
     for parameterHeaderName in arg:
         v = dfSubset[parameterHeaderName].values
-        plt.plot(dfSubset['dateTimes'],v.astype(np.float),label=parameterHeaderName) 
+        plt.plot(dfSubset['dateTimes'],v.astype(np.float),label=parameterHeaderName, marker='o') 
     
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
     plt.xlabel('time (UTC)')  
@@ -82,7 +82,7 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     ax2 = ax.twiny()
     for parameterHeaderName in arg:
         v = dfSubset[parameterHeaderName].values
-        plt.plot(dfSubset['sof'],v.astype(np.float),label=parameterHeaderName) 
+        plt.plot(dfSubset['sof'],v.astype(np.float),label=parameterHeaderName, marker='o') 
     ax2.ticklabel_format(useOffset=False)
     plt.xlabel('sof time (seconds since boot of PTP master)')
     
