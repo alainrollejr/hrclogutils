@@ -4,7 +4,7 @@ Spyder Editor
 
 This is a temporary script file.
 """
-import matplotlib.pyplot as plt
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -13,7 +13,7 @@ import hrclogutils.basic as hrc
 import hrclogutils.rtce as rtce
 
 # replace path to appropriate location for your analysis
-df = rtce.load_rtce_log("../tests/sbc_rtce_monitor.csv","../tests/sbc_rtce_monitor.headers")
+df = rtce.load_rtce_log("./sbc_rtce_monitor.csv","../tests/sbc_rtce_monitor.headers")
 
 
 # filter to display terminals only when they are logging on
@@ -24,7 +24,7 @@ df = df.reset_index()
 df.pipe(hrc.plot_utc_sof,'id')
 
 id_list = df['id'].unique()
-print('unique id\'s in log:')
+print(str(len(id_list)) +  " unique id\'s in log:")
 print(id_list)
 
 
