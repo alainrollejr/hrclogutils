@@ -182,5 +182,21 @@ def plot_pie(df, *arg):  # argument is column and label
     plt.legend(loc='best')  
     plt.title('Pie chart distribution of ' + arg[0])
     plt.show()    
+    
+def plot_bar(df, *arg):
+    x = df[arg[0]].values  # values in first argument
+    
+    lab = df[arg[1]] # labels in second argument
+    ind = np.arange(len(lab)) # the x locations for the groups
+    width = 0.35       # the width of the bars
+    
+    print("bar of " + lab) 
+    print(type(lab))
+    fig, ax = plt.subplots()
+    ax.bar(ind,x)
+    ax.set_xticks(ind + width / 2)
+    ax.set_xticklabels(lab)
+    plt.title('Bar chart  of ' + arg[0])
+    plt.show()
 
 	

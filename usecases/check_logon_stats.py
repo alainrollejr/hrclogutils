@@ -33,7 +33,8 @@ def main(argv):
     
     id_list = df['id'].unique()
     print(str(len(id_list)) +  " unique terminal id\'s in log:")
-    print(id_list)
+    print(id_list)    
+   
 
 
 if __name__ == "__main__":
