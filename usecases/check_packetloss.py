@@ -2,7 +2,13 @@
 """
 Created on Sat Jan 13 23:53:29 2018
 
+ script to check on packetloss for a terminal, and to investigate to what the
+ packet loss potentially correlates.
+ 
+ Execute from CLI as follows:
+
  python check_packetloss.py 15843 ../tests/sbc_carrier_tracking_monitor.csv
+ 
  in Spyder IDU %run check_packetloss.py 15843 ../tests/sbc_carrier_tracking_monitor.csv
  
 """
