@@ -169,5 +169,18 @@ def plot_xcor(df, *arg):  # argument is list of the 2 headers to be plotted vs e
     ax.yaxis.grid() # horizontal lines
     ax.xaxis.grid() # vertical lines 
     plt.show()
+    
+# general purpose tool to plot 1 columns from dataframe as pie chart
+def plot_pie(df, *arg):  # argument is column and label
+    x = df[arg[0]].values  
+    #print("pie of " + str(x)) 
+    lab = df[arg[1]]
+    print("pie of " + lab) 
+    print(type(lab))
+    fig, ax = plt.subplots()
+    plt.pie(x.astype(float),labels=lab) 
+    plt.legend(loc='best')  
+    plt.title('Pie chart distribution of ' + arg[0])
+    plt.show()    
 
 	

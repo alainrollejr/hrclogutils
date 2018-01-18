@@ -17,6 +17,7 @@ def load_carrier_log(path="./sbc_carrier_tracking_monitor.csv",
     df['modcod'] = df['modcod'].astype(float)
     df['curSymbRate(Bd)'] = df['curSymbRate(Bd)'].astype(float)
     df['spreadingFactor'] = df['spreadingFactor'].astype(float)
+    df['chiprate(Bd)'] = df['spreadingFactor']*df['curSymbRate(Bd)'];
     df['efficiency(bits/symbol)'] = 0.1 * df['modcod']  / df['spreadingFactor']
     df['allocatedRate(bits/s)'] =  df['efficiency(bits/symbol)']*df['curSymbRate(Bd)']    
     return df;
@@ -74,7 +75,10 @@ def terminal_averages(df, *arg):  # argument is list of columns to be evaluated 
     for i in range(len(arg)):
         dfSubset[arg[i]] = dfSubset[arg[i]].astype(float)
     
-    return pd.pivot_table(dfSubset,index=["terminal"],values=arg)
+    pdpiv = pd.pivot_table(dfSubset,index=["terminal"],values=arg)
+    pdpiv.reset_index(inplace=True)
+    
+    return pdpiv
 
 def terminal_minmax(df, *arg):  # argument is list of columns to be evaluated (averaged) for the terminal overview
     colString = 'terminal '; 
@@ -90,8 +94,10 @@ def terminal_minmax(df, *arg):  # argument is list of columns to be evaluated (a
     for i in range(len(arg)):
         dfSubset[arg[i]] = dfSubset[arg[i]].astype(float)
     
-    return pd.pivot_table(dfSubset,index=["terminal"],values=arg,aggfunc=[np.min, np.max])
+    pdpiv = pd.pivot_table(dfSubset,index=["terminal"],values=arg,aggfunc=[np.min, np.max])
+    pdpiv.reset_index(inplace=True)
     
+    return pdpiv
     
     
     
