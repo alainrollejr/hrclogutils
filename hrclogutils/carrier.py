@@ -13,6 +13,12 @@ import hrclogutils.basic as hrc
 def load_carrier_log(path="./sbc_carrier_tracking_monitor.csv",
                      header_path="./sbc_carrier_tracking_monitor.headers"):
     df = hrc.load_csv_log(path,header_path)
+     # enhance with some derived columns        
+    df['modcod'] = df['modcod'].astype(float)
+    df['curSymbRate(Bd)'] = df['curSymbRate(Bd)'].astype(float)
+    df['spreadingFactor'] = df['spreadingFactor'].astype(float)
+    df['efficiency(bits/symbol)'] = 0.1 * df['modcod']  / df['spreadingFactor']
+    df['allocatedRate(bits/s)'] =  df['efficiency(bits/symbol)']*df['curSymbRate(Bd)']    
     return df;
 
 # filter on terminal id, id should be the 'xyz' string found in 'terminal_xyz'

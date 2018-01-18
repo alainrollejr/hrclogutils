@@ -13,11 +13,13 @@ import hrclogutils.carrier as carrier
 def main(argv):
     if len(argv)==3:
         df = carrier.load_carrier_log(argv[1],argv[2])
-    else:
+    elif len(argv)==2:
         df = carrier.load_carrier_log(argv[1], "../tests/sbc_carrier_tracking_monitor.headers")
+    elif len(argv)==1:
+        df = carrier.load_carrier_log("../tests/sbc_carrier_tracking_monitor.csv", "../tests/sbc_carrier_tracking_monitor.headers")
 
-
-    dfpivot = df.pipe(carrier.terminal_minmax,'curEsNo(dB)','modcod','spreadingFactor');
+    print(df.head())
+    dfpivot = df.pipe(carrier.terminal_averages,'curEsNo(dB)','efficiency(bits/symbol)','allocatedRate(bits/s)','curSymbRate(Bd)');
     print(dfpivot)
     
 
