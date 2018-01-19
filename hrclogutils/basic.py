@@ -90,7 +90,47 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     plt.legend(loc='best') 
     ax.yaxis.grid() # horizontal lines
     ax.xaxis.grid() # vertical lines   
-    plt.show()    
+    plt.show()  
+    
+# general purpose tool to plot a column(s) that contains strings  vs UTC time and SOF time (two x axis)
+def plot_str_utc_sof(df, *arg): # argument is list of headers to be plotted    
+    colString = 'dateTimes sof '+arg[0];  
+    
+    dfSubset = df.loc[:,colString.split()];
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after dropping   
+    
+    keys = dfSubset[arg[0]].unique() # labels in second argument
+    ind = np.arange(len(keys)) # the y locations for the groups
+    width = 10.0       # the width of the tick separation
+    
+    dictionary = dict(zip(keys, ind))
+    dfSubset.replace({arg[0]: dictionary}) # replace the strings by their ind values used for plotting
+  
+    fig, ax1 = plt.subplots()
+   
+    ax1.set_yticks(ind + width / 2)
+    ax1.set_yticklabels(keys)  
+    
+    
+       
+    plt.plot(dfSubset['dateTimes'],dfSubset[arg[0]],label=arg[0], marker='o') 
+    
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
+    plt.xlabel('time (UTC)')  
+    
+    
+    ax2 = ax1.twiny()
+    plt.plot(dfSubset['sof'],dfSubset[arg[0]],label=arg[0], marker='o')     
+    #ax2.ticklabel_format(useOffset=False)
+    plt.xlabel('sof time (seconds since boot of PTP master)')
+    
+    
+    plt.legend(loc='best') 
+    ax2.yaxis.grid() # horizontal lines
+    ax2.xaxis.grid() # vertical lines   
+    plt.show() 
     
 # general purpose tool to plot column(s) from the log vs UTC time
 def plot_utc(df, *arg): # argument is list of headers to be plotted
@@ -175,8 +215,7 @@ def plot_pie(df, *arg):  # argument is column and label
     x = df[arg[0]].values  
     #print("pie of " + str(x)) 
     lab = df[arg[1]]
-    print("pie of " + lab) 
-    print(type(lab))
+ 
     fig, ax = plt.subplots()
     plt.pie(x.astype(float),labels=lab) 
     plt.legend(loc='best')  
@@ -189,9 +228,7 @@ def plot_bar(df, *arg):
     lab = df[arg[1]] # labels in second argument
     ind = np.arange(len(lab)) # the x locations for the groups
     width = 0.35       # the width of the bars
-    
-    print("bar of " + lab) 
-    print(type(lab))
+  
     fig, ax = plt.subplots()
     ax.bar(ind,x)
     ax.set_xticks(ind + width / 2)

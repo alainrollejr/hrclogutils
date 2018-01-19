@@ -20,8 +20,10 @@ import hrclogutils.rtce as rtce
 def main(argv):
     if len(argv)==3:
         df = rtce.load_rtce_log(argv[1],argv[2])
-    else:
+    elif len(argv)==2:
         df = rtce.load_rtce_log(argv[1], "../tests/sbc_rtce_monitor.headers")
+    else:
+        df = rtce.load_rtce_log("./sbc_rtce_monitor.csv", "../tests/sbc_rtce_monitor.headers")
     
     
     # filter to display terminals only when they are logging on
@@ -29,7 +31,7 @@ def main(argv):
     df = df.reset_index()
     
     # print the logon attempts vs time, for all terminal id's
-    df.pipe(hrc.plot_utc_sof,'id')
+    df.pipe(hrc.plot_str_utc_sof,'name')
     
     id_list = df['id'].unique()
     print(str(len(id_list)) +  " unique terminal id\'s in log:")
