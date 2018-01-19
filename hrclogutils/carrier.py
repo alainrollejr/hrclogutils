@@ -34,9 +34,9 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
                    stopDateTime="2200-06-15T13:45:30"):
     
     df = load_carrier_log(path, header_path)
-    
+    print(df.head())
     dfSubset = df.pipe(filter_terminal, idsubstring).pipe(hrc.filter_utc,startDateTime,stopDateTime)
-    
+    print(dfSubset.head())
     
     dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
     dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them

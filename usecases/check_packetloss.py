@@ -14,11 +14,13 @@ Created on Sat Jan 13 23:53:29 2018
 """
 import os
 import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import argparse
 
 import hrclogutils.carrier as carrier
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 
 
 
@@ -57,6 +59,12 @@ def main(argv):
         
     if stopDateTime is None:
         stopDateTime="2200-06-15T13:45:30"
+        
+    carrier.packet_error_analysis(idsubstring,            
+                   path,
+                   header_path, 
+                   startDateTime,
+                   stopDateTime)
         
     
 if __name__ == "__main__":
