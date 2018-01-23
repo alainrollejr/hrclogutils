@@ -74,11 +74,13 @@ def plot_spectrum(df,spectrumDateTime):
     
     # sort by carrier freq
     dfSlice = dfSlice.sort_values(['SCH.f'], ascending=True)
-    
-    freq_corners = np.zeros(shape=(2*len(dfSlice.index),1) )
-    psd_corners = np.zeros(shape=(2*len(dfSlice.index),1) )
+    minval = -175.0
+    freq_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
+    psd_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
     i = 0
-    for index, row in dfSlice.iterrows():
+    fig, ax = plt.subplots()
+    
+    for index, row in dfSlice.iterrows():        
         print(row['SCH.f'])
         center_freq = float(row['SCH.f'])
         cr = float(row['SCH.Cr'])
@@ -86,14 +88,22 @@ def plot_spectrum(df,spectrumDateTime):
         #noise_psd = sig_psd - float(row['MCD.EsNo'])
         start_freq = center_freq - 0.5*cr
         stop_freq = center_freq + 0.5*cr
+        freq_corners[i] = start_freq - 1
+        psd_corners[i] = minval
+        i = i+1
         freq_corners[i] = start_freq
         psd_corners[i] =  sig_psd
         i = i+1
         freq_corners[i] = stop_freq
         psd_corners[i] =  sig_psd
         i = i+1
+        freq_corners[i] = stop_freq +1
+        psd_corners[i] =  minval
+        i = i+1
         
-    fig, ax = plt.subplots()
+        ax.annotate(row['name'], xy=(center_freq,minval+10), rotation = 90)
+        
+    
     
     plt.plot(freq_corners,psd_corners,'.-') 
     
