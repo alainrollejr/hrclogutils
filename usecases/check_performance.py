@@ -8,6 +8,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import hrclogutils.basic as hrc
 import hrclogutils.carrier as carrier
 
 def main(argv):
@@ -19,8 +20,16 @@ def main(argv):
         df = carrier.load_carrier_log("../tests/sbc_carrier_tracking_monitor.csv", "../tests/sbc_carrier_tracking_monitor.headers")
 
     print(df.head())
-    dfpivot = df.pipe(carrier.terminal_averages,'curEsNo(dB)','efficiency(bits/symbol)','allocatedRate(bits/s)','curSymbRate(Bd)');
-    print(dfpivot)
+    dfpivot = df.pipe(carrier.terminal_averages,'curEsNo(dB)','efficiency(bits/symbol)','allocatedRate(bits/s)','chiprate(Bd)');
+    print(dfpivot.head())
+    
+    # pie chart that shows average consumption of bandwidth by all terminals
+    dfpivot.pipe(hrc.plot_pie,'chiprate(Bd)','terminal')
+    
+    # bar chart that shows average efficiency
+    dfpivot.pipe(hrc.plot_bar,'efficiency(bits/symbol)','terminal')
+    
+    
     
 
 if __name__ == "__main__":
