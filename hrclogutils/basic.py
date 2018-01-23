@@ -18,6 +18,7 @@ Created on Sat Jan 13 23:44:54 2018
 import pandas as pd
 import numpy as np
 from dateutil.parser import parse
+from datetime import datetime, timedelta
 
 
 import matplotlib.dates as mdates
@@ -38,8 +39,12 @@ def load_csv_log(path,header_path):
 
 # filter on a time episode. Start is in past (my birthday) and Stop when I'll be dead, so you can omit either of them
 def filter_utc(df,startDateTime="1977-06-02T13:45:30",stopDateTime="2200-06-15T13:45:30"):
-    startDateTimeParsed = parse(startDateTime)
+    startDateTimeParsed = parse(startDateTime)    
     stopDateTimeParsed = parse(stopDateTime)
+    
+    if (startDateTimeParsed-stopDateTimeParsed) == timedelta(0):        
+        stopDateTimeParsed = startDateTimeParsed + timedelta(seconds=1)
+        
     return df[(df['dateTimes'] >= startDateTimeParsed) & (df['dateTimes'] <= stopDateTimeParsed)]
 
 # general purpose tool to reduce the dataframe to list of columns   
