@@ -43,6 +43,8 @@ def main(argv):
     # bar chart that shows average efficiency
     dfpivot.pipe(hrc.plot_bar,'efficiency(bits/symbol)','terminal')
     
+    dfpivot.pipe(hrc.plot_bar,'allocatedRate(bits/s)','terminal')
+    
     
     
 
