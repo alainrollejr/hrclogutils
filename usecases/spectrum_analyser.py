@@ -16,10 +16,6 @@ import hrclogutils.rtce as rtce
 
 
 
-
-
-
-
 def main(argv):
     
     parser = argparse.ArgumentParser(description='spectrum analyser emulation based on RTCE log file playback')
@@ -51,8 +47,9 @@ def main(argv):
         stopDateTime="2200-06-15T13:45:30"
         
     df = rtce.load_rtce_log(rtce_path=path,rtce_header_path=header_path)
-    df.pipe(rtce.plot_spectrum,"2018-01-17T21:32:07")
-        
+    df.pipe(rtce.plot_spectrum,"2018-01-17T21:32:07","2018-01-17T21:32:17")
+    
+    
     
         
     

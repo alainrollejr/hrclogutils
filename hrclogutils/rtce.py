@@ -68,62 +68,77 @@ def terminal_minmax(df, *arg):  # argument is list of columns to be evaluated (a
         
     return pd.pivot_table(dfSubset,index=["name"],values=arg,aggfunc=[np.min, np.max])
 
-def plot_spectrum(df,spectrumDateTime):
-    dfSlice = df.pipe(hrc.filter_utc,startDateTime=spectrumDateTime,stopDateTime=spectrumDateTime).pipe(filter_assigned_to_demod)
+def plot_spectrum(df,startDateTime, stopDateTime):
+    dfSlice = df.pipe(hrc.filter_utc,startDateTime=startDateTime,stopDateTime=stopDateTime).pipe(filter_assigned_to_demod)
         
-    # sort by carrier freq
-    dfSlice = dfSlice.sort_values(['SCH.f'], ascending=True)
-    minval = -175.0
-    freq_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
-    psd_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
-    noise_psd_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
-    i = 0
-    fig, ax = plt.subplots()
+    sofs = dfSlice['sof'].unique()
     
-    for index, row in dfSlice.iterrows(): 
+    
+    for sof in sofs:
+        dfSubSlice = dfSlice[dfSlice['sof']==sof]
+        print('sof ' + str(sof))
         
-        center_freq = float(row['SCH.f'])
-        cr = float(row['SCH.Cr'])
-        sig_psd = float(row['MCD.Co'])
-        if 'InvalidModcod' in row['SCH.Mc']:
-            annotation = row['name'] + ' (logging on)'
-            noise_psd = float(row['STA.AvgNo'])
-        else:
-            annotation = row['name']
-            noise_psd = sig_psd - float(row['MCD.EsNo'])
+        # sort by carrier freq
+        dfSubSlice = dfSubSlice.sort_values(['SCH.f'], ascending=True)
+        minval = -175.0
+        freq_corners = np.zeros(shape=(4*len(dfSubSlice.index),1) )
+        psd_corners = np.zeros(shape=(4*len(dfSubSlice.index),1) )
+        noise_psd_corners = np.zeros(shape=(4*len(dfSubSlice.index),1) )
+        i = 0
+        fig, ax = plt.subplots()
+        
+        for index, row in dfSubSlice.iterrows(): 
+            if row['SCH.f'] != "":
+                center_freq = float(row['SCH.f'])
+                
+                cr = float(row['SCH.Cr'])
+                sig_psd = float(row['MCD.Co'])
+                if 'InvalidModcod' in row['SCH.Mc']:
+                    annotation = row['name'] + ' (logging on)'
+                    noise_psd = float(row['STA.AvgNo'])
+                else:
+                    annotation = row['name']
+                    noise_psd = sig_psd - float(row['MCD.EsNo'])
+                    
+                start_freq = center_freq - 0.5*cr
+                stop_freq = center_freq + 0.5*cr
+                freq_corners[i] = start_freq - 1
+                psd_corners[i] = minval
+                noise_psd_corners[i] = float(row['STA.AvgNo'])
+                i = i+1
+                freq_corners[i] = start_freq
+                psd_corners[i] =  sig_psd
+                noise_psd_corners[i] = noise_psd
+                i = i+1
+                freq_corners[i] = stop_freq
+                psd_corners[i] =  sig_psd
+                noise_psd_corners[i] = noise_psd
+                i = i+1
+                freq_corners[i] = stop_freq +1
+                psd_corners[i] =  minval
+                noise_psd_corners[i] = float(row['STA.AvgNo'])
+                i = i+1        
+                
+                
+                ax.annotate(annotation, xy=(center_freq,minval+ 20), rotation = 90)
             
-        start_freq = center_freq - 0.5*cr
-        stop_freq = center_freq + 0.5*cr
-        freq_corners[i] = start_freq - 1
-        psd_corners[i] = minval
-        noise_psd_corners[i] = noise_psd
-        i = i+1
-        freq_corners[i] = start_freq
-        psd_corners[i] =  sig_psd
-        noise_psd_corners[i] = noise_psd
-        i = i+1
-        freq_corners[i] = stop_freq
-        psd_corners[i] =  sig_psd
-        noise_psd_corners[i] = noise_psd
-        i = i+1
-        freq_corners[i] = stop_freq +1
-        psd_corners[i] =  minval
-        noise_psd_corners[i] = noise_psd
-        i = i+1        
         
         
-        ax.annotate(annotation, xy=(center_freq,minval+ 20), rotation = 90)
+        plt.plot(freq_corners,psd_corners,'.-') 
+        plt.plot(freq_corners,noise_psd_corners,'r-') 
         
-    
-    
-    plt.plot(freq_corners,psd_corners,'.-') 
-    plt.plot(freq_corners,noise_psd_corners,'r-') 
-    
-    
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('psd (dBm/Hz)')
-    
-    ax.yaxis.grid() # horizontal lines
-    ax.xaxis.grid() # vertical lines 
-    plt.show()
+        
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('psd (dBm/Hz)')
+        plt.title(str(row['dateTimes']));
+        
+        ax.yaxis.grid() # horizontal lines
+        ax.xaxis.grid() # vertical lines 
+        
+        mng = plt.get_current_fig_manager()
+        mng.full_screen_toggle()
+        
+        plt.show()
+        plt.pause(2)
+        plt.close()
     
