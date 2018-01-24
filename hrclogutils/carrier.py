@@ -53,6 +53,8 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
     
     dfSubset.pipe(hrc.plot_utc_sof,'perProcent')
     
+    dfSubset.pipe(hrc.plot_utc_sof,'curFreqOffset(Hz)')
+    
     # create a list with columns worth retaining for a crosscorrelation
     dfCrossList = ['curEsNo(dB)','curFreqErrorPreamble','curSymbolRateTimingErrorPreamble','agcFailure',
                    'modcod','chipRateMultiplicator','spreadingFactor',
