@@ -25,16 +25,13 @@ def main(argv):
     
     parser.add_argument('-p','--path', help='path to sbc_rtce_monitor.csv', required=False)
     parser.add_argument('-c','--columns', help='path to sbc_rtce_monitor.headers', required=False)
-    parser.add_argument('-b','--beginTime', help='begin time eg 2018-01-15T11:23:59', required=False)
-    parser.add_argument('-e','--endTime', help='end time eg 2018-01-15T12:23:59', required=False)
     args = vars(parser.parse_args())
    
     
    
     path = args['path']
     header_path = args['columns']
-    startDateTime = args['beginTime']
-    stopDateTime = args['endTime']
+ 
     
    
     if path is None:
@@ -42,12 +39,7 @@ def main(argv):
         
     if header_path is None:
         header_path="../tests/sbc_rtce_monitor.headers"
-        
-    if startDateTime is None:
-        startDateTime="1977-06-02T13:45:30"
-        
-    if stopDateTime is None:
-        stopDateTime="2200-06-15T13:45:30"
+    
     
     
         

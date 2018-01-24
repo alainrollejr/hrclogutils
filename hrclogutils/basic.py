@@ -94,7 +94,10 @@ def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     
     plt.legend(loc='best') 
     ax.yaxis.grid() # horizontal lines
-    ax.xaxis.grid() # vertical lines   
+    ax.xaxis.grid() # vertical lines  
+    
+    mng = plt.get_current_fig_manager()
+    mng.full_screen_toggle()
     plt.show()  
     
 # general purpose tool to plot a column(s) that contains strings  vs UTC time and SOF time (two x axis)
@@ -134,7 +137,10 @@ def plot_str_utc_sof(df, *arg): # argument is list of headers to be plotted
     
     plt.legend(loc='best') 
     ax2.yaxis.grid() # horizontal lines
-    ax2.xaxis.grid() # vertical lines   
+    ax2.xaxis.grid() # vertical lines  
+    
+    mng = plt.get_current_fig_manager()
+    mng.full_screen_toggle()
     plt.show() 
     
 # general purpose tool to plot column(s) from the log vs UTC time
