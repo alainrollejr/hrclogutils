@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import hrclogutils.basic as hrc
 import hrclogutils.rtce as rtce
 import argparse
+import matplotlib.pyplot as plt
 
 
 def main(argv):
@@ -49,10 +50,33 @@ def main(argv):
     print(df.info()) # gives an idea what can be asked to plot
     
     df.pipe(hrc.plot_utc_sof,'Next.TxPSD','txPsdLimit')
+    plt.title('applied TX PSD and TX PSD limit imposed by API with BC',y=1.1)
+    plt.show()
     
     df.pipe(hrc.plot_utc_sof,'fbRequestedPower','fbAppliedPower','reportedPuSat')
+    plt.title('requested power by hub, applied power by terminal and saturated power according to API with BC',y=1.1)
+    plt.show()
+    
+    df.pipe(hrc.plot_utc_sof,'MCD.Co','STA.BepdClrSky','STA.AvgNo')
+    plt.title('RX PSD, RX BEPD calibration and RX noise',y=1.1)
+    plt.show()
+    
+    df.pipe(hrc.plot_utc_sof,'MCD.EsNo')
+    
+    df.pipe(hrc.plot_utc_sof,'STA.G')
+    plt.title('path gain (between TX PSD and RX PSD)',y=1.1)
+    plt.show()
+    
+    df.pipe(hrc.plot_xcor,'fbAppliedPower','STA.G')
+    plt.title('applied Tx power vs measured path gain',y=1.1)
+    plt.show()
+    
+    df.pipe(hrc.plot_utc_sof,'reportedPuSat','STA.PuSat')
+    plt.title('power control API saturated power field vs own saturated power estimate',y=1.1)
+    plt.show()
     
     # TODO: compare reportedPuSat with our own PuSat estimator whenever available
+    # TODO: compare RX Co with BEPD and No
     # TODO: analyse gain stability and gain vs IDU characteristics (incorporate gain based saturation estimation)
     
 if __name__ == "__main__":
