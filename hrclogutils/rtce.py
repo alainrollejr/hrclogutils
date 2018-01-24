@@ -70,45 +70,58 @@ def terminal_minmax(df, *arg):  # argument is list of columns to be evaluated (a
 
 def plot_spectrum(df,spectrumDateTime):
     dfSlice = df.pipe(hrc.filter_utc,startDateTime=spectrumDateTime,stopDateTime=spectrumDateTime).pipe(filter_assigned_to_demod)
-    print(dfSlice['demod'])
-    
+        
     # sort by carrier freq
     dfSlice = dfSlice.sort_values(['SCH.f'], ascending=True)
     minval = -175.0
     freq_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
     psd_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
+    noise_psd_corners = np.zeros(shape=(4*len(dfSlice.index),1) )
     i = 0
     fig, ax = plt.subplots()
     
-    for index, row in dfSlice.iterrows():        
-        print(row['SCH.f'])
+    for index, row in dfSlice.iterrows(): 
+        
         center_freq = float(row['SCH.f'])
         cr = float(row['SCH.Cr'])
         sig_psd = float(row['MCD.Co'])
-        #noise_psd = sig_psd - float(row['MCD.EsNo'])
+        if 'InvalidModcod' in row['SCH.Mc']:
+            annotation = row['name'] + ' (logging on)'
+            noise_psd = float(row['STA.AvgNo'])
+        else:
+            annotation = row['name']
+            noise_psd = sig_psd - float(row['MCD.EsNo'])
+            
         start_freq = center_freq - 0.5*cr
         stop_freq = center_freq + 0.5*cr
         freq_corners[i] = start_freq - 1
         psd_corners[i] = minval
+        noise_psd_corners[i] = noise_psd
         i = i+1
         freq_corners[i] = start_freq
         psd_corners[i] =  sig_psd
+        noise_psd_corners[i] = noise_psd
         i = i+1
         freq_corners[i] = stop_freq
         psd_corners[i] =  sig_psd
+        noise_psd_corners[i] = noise_psd
         i = i+1
         freq_corners[i] = stop_freq +1
         psd_corners[i] =  minval
-        i = i+1
+        noise_psd_corners[i] = noise_psd
+        i = i+1        
         
-        ax.annotate(row['name'], xy=(center_freq,minval+10), rotation = 90)
+        
+        ax.annotate(annotation, xy=(center_freq,minval+ 20), rotation = 90)
         
     
     
     plt.plot(freq_corners,psd_corners,'.-') 
+    plt.plot(freq_corners,noise_psd_corners,'r-') 
+    
     
     plt.xlabel('Frequency (Hz)')
-    plt.ylabel('psd')
+    plt.ylabel('psd (dBm/Hz)')
     
     ax.yaxis.grid() # horizontal lines
     ax.xaxis.grid() # vertical lines 
