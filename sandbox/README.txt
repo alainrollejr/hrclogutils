@@ -1,0 +1,1 @@
+A convenient folder to temporarily hold log files (eg taken from field deployments) 
