@@ -11,13 +11,27 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import hrclogutils.basic as hrc
 import hrclogutils.carrier as carrier
 
+import argparse
+
 def main(argv):
-    if len(argv)==3:
-        df = carrier.load_carrier_log(argv[1],argv[2])
-    elif len(argv)==2:
-        df = carrier.load_carrier_log(argv[1], "../tests/sbc_carrier_tracking_monitor.headers")
-    elif len(argv)==1:
-        df = carrier.load_carrier_log("../tests/sbc_carrier_tracking_monitor.csv", "../tests/sbc_carrier_tracking_monitor.headers")
+    
+    parser = argparse.ArgumentParser(description='script to check performance of a satnet (efficiency, esno, etc)')
+    
+    parser.add_argument('-p','--path', help='path to sbc_carrier_tracking_monitor.csv', required=False)
+    parser.add_argument('-c','--columns', help='path to sbc_carrier_tracking_monitor.headers', required=False)
+
+    args = vars(parser.parse_args())
+    path = args['path']
+    header_path = args['columns']
+    
+    if path is None:
+        path="../tests/sbc_carrier_tracking_monitor.csv"
+        
+    if header_path is None:
+        header_path="../tests/sbc_carrier_tracking_monitor.headers"
+    
+    
+    df = carrier.load_carrier_log(path, header_path)
 
     print(df.head())
     dfpivot = df.pipe(carrier.terminal_averages,'curEsNo(dB)','efficiency(bits/symbol)','allocatedRate(bits/s)','chiprate(Bd)');
