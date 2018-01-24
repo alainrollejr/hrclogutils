@@ -75,8 +75,7 @@ def plot_spectrum(df,startDateTime, stopDateTime):
     
     
     for sof in sofs:
-        dfSubSlice = dfSlice[dfSlice['sof']==sof]
-        print('sof ' + str(sof))
+        dfSubSlice = dfSlice[dfSlice['sof']==sof]        
         
         # sort by carrier freq
         dfSubSlice = dfSubSlice.sort_values(['SCH.f'], ascending=True)
@@ -130,7 +129,7 @@ def plot_spectrum(df,startDateTime, stopDateTime):
         
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('psd (dBm/Hz)')
-        plt.title(str(row['dateTimes']));
+        plt.title(row['dateTimes'].strftime("%Y-%m-%d %H:%M:%S")+' sof ='+str(sof));
         
         ax.yaxis.grid() # horizontal lines
         ax.xaxis.grid() # vertical lines 
@@ -140,5 +139,6 @@ def plot_spectrum(df,startDateTime, stopDateTime):
         
         plt.show()
         plt.pause(2)
+        plt.savefig('spectrum-'+row['dateTimes'].strftime("%Y-%m-%d-T%H-%M-%S")+'.png')
         plt.close()
     

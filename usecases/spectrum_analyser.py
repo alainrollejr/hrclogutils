@@ -18,7 +18,7 @@ import hrclogutils.rtce as rtce
 
 def main(argv):
     
-    parser = argparse.ArgumentParser(description='spectrum analyser emulation based on RTCE log file playback')
+    parser = argparse.ArgumentParser(description='spectrum analyser emulation based on RTCE log file playback. Creates a series of png')
     
     parser.add_argument('-p','--path', help='path to sbc_rtce_monitor.csv', required=False)
     parser.add_argument('-c','--columns', help='path to sbc_rtce_monitor.headers', required=False)
@@ -41,13 +41,13 @@ def main(argv):
         header_path="../tests/sbc_rtce_monitor.headers"
         
     if startDateTime is None:
-        startDateTime="2018-01-17T21:32:07"
+        startDateTime="1977-06-02T13:45:30"
         
     if stopDateTime is None:
         stopDateTime="2200-06-15T13:45:30"
         
     df = rtce.load_rtce_log(rtce_path=path,rtce_header_path=header_path)
-    df.pipe(rtce.plot_spectrum,"2018-01-17T21:32:07","2018-01-17T21:32:17")
+    df.pipe(rtce.plot_spectrum,startDateTime,stopDateTime)
     
     
     
