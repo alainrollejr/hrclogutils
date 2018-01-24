@@ -63,8 +63,12 @@ def main(argv):
     
     df.pipe(hrc.plot_utc_sof,'MCD.EsNo')
     
-    df.pipe(hrc.plot_utc_sof,'STA.G')
+    df.pipe(hrc.plot_utc_sof,'STA.G','fbRequestedPower')
     plt.title('path gain (between TX PSD and RX PSD)',y=1.1)
+    plt.show()
+    
+    df.pipe(hrc.plot_utc_sof,'STA.G','STA.AcmMrg','STA.AcmMarginForEirpPsdLimitVariation')
+    plt.title('path gain (between TX PSD and RX PSD) and ACM margin',y=1.1)
     plt.show()
     
     df.pipe(hrc.plot_xcor,'fbAppliedPower','STA.G')

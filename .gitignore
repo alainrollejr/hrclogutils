@@ -6,3 +6,5 @@ tests/reduced_rtce_log.csv
 usecases/spectrum-2018-01-17-T21-32-07.png
 *.png
 *.pyc
+sandbox/sbc_carrier_tracking_monitor.csv
+sandbox/sbc_rtce_monitor.csv
