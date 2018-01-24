@@ -33,7 +33,7 @@ def main(argv):
     
     df = carrier.load_carrier_log(path, header_path)
 
-    print(df.head())
+    #print(df.head())
     dfpivot = df.pipe(carrier.terminal_averages,'curEsNo(dB)','efficiency(bits/symbol)','allocatedRate(bits/s)','chiprate(Bd)');
     print(dfpivot.head())
     
