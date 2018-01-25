@@ -21,21 +21,19 @@ import re
 def main(argv):
     
     parser = argparse.ArgumentParser(description='script to check mobility flows related to a terminal')
-    parser.add_argument('-t','--terminal_id', help='for terminal_123 the required id to be passed as argument is 123', required=False)
+    
     parser.add_argument('-m','--mac', help='mac address of terminal', required=False)
     parser.add_argument('-p','--path', help='path to dmm.log.* file', required=False)
     
     args = vars(parser.parse_args())
    
     
-    idsubstring = args['terminal_id']
-    print(idsubstring)
+    macstring = args['mac']
+    
     path = args['path']
     
     
-    if idsubstring is None:
-        # look at all terminals
-        idsubstring = '00:0d:2e:00:02:83'
+    
     
     if path is None:
         path="../sandbox/dmm.log"
@@ -67,22 +65,65 @@ def main(argv):
     """
     
 
-    columns = ['dateTime','mac', 'lat', 'long','located','activebeam']
+    columns = ['dateTime','mac', 'located','activebeam','lat', 'long']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
-    i = 1
+    
     for line in file_content.splitlines():
         if "Response: \"GetMobileInfoList\"" in line:
             date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")
             #date = parse(line[0:20]) 
-            print(line)
-            print(str(date))
-            i = i+1
             
-            if (i > 10):
-                break
+            temp_list = re.split("[{}=;\']+",line)
+            #print(temp_list)
             
-    print(df.head())
+            mobile_info_date = date
+            mobile_info_mac = "00:00:00:00:00:00"
+            mobile_info_located = False
+            mobile_info_beam = "dummybeam"
+            mobile_info_longitude = 0.0
+            mobile_info_latitude = 0.0
+            
+            for ind, element in enumerate(temp_list):
+                element = element.strip() # remove accidental white space from string
+                #print(str(ind) + "=" + element)
+                if element in mac_list_unique:
+                    # add a row to the dataframe
+                    mobile_info_mac = element
+                    mobile_info_date = date
+                    mobile_info_located = False
+                    
+                    
+                if "operational/located" in element:
+                    mobile_info_located = True
+                    
+                    
+                if "active-beam" in element:
+                    mobile_info_beam = temp_list[ind+1]
+                    
+                if "longitude" in element:
+                    mobile_info_longitude = float(temp_list[ind+1])
+                    
+                if "latitude" in element:
+                    mobile_info_latitude = float(temp_list[ind+1])                    
+                    # this was the last thing about this mac address we wanted to put in table row
+                    row=pd.Series([mobile_info_date, mobile_info_mac,
+                                   mobile_info_located,mobile_info_beam,
+                                   mobile_info_latitude, mobile_info_longitude],columns)
+                    df = df.append([row],ignore_index=True)
+                    
+            
+    if macstring is None:
+        df.to_csv('mobileInfoList.csv')
+    else:    
+        print(df.head())
+        print(df.info())
+        print(df['mac'])
+        print(macstring)
+        df = df[df['mac'].str.contains(macstring)]
+        df.to_csv('mobileInfoList.csv')
+        
+        df.plot(['lat','long'])
         
         
     
