@@ -22,7 +22,7 @@ def main(argv):
     
     parser = argparse.ArgumentParser(description='script to check mobility flows related to a terminal')
     
-    parser.add_argument('-m','--mac', help='mac address of terminal', required=False)
+    parser.add_argument('-m','--mac', help='mac address of terminal, eg -m 00:0d:2e:00:02:81 (no quotes !)', required=False)
     parser.add_argument('-p','--path', help='path to dmm.log.* file', required=False)
     
     args = vars(parser.parse_args())
@@ -51,8 +51,10 @@ def main(argv):
 
     mac_list = re.findall(p, file_content)   
     
-    
-    mac_list_unique = set(mac_list) #convert list to a set
+    if macstring is None:
+        mac_list_unique = set(mac_list) #convert list to a set
+    else:
+        mac_list_unique = [macstring]
     print(mac_list_unique)
     print(str(len(mac_list_unique)) + ' unique mac addresses found')
     
@@ -113,17 +115,9 @@ def main(argv):
                     df = df.append([row],ignore_index=True)
                     
             
-    if macstring is None:
-        df.to_csv('mobileInfoList.csv')
-    else:    
-        print(df.head())
-        print(df.info())
-        print(df['mac'])
-        print(macstring)
-        df = df[df['mac'].str.contains(macstring)]
-        df.to_csv('mobileInfoList.csv')
-        
-        df.plot(['lat','long'])
+    print(df.head())
+    df.to_csv('mobileInfoList.csv')        
+    df.plot(x='long',y='lat',kind='scatter')
         
         
     
