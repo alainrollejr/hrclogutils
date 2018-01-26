@@ -58,7 +58,7 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
     # create a list with columns worth retaining for a crosscorrelation
     dfCrossList = ['curEsNo(dB)','curFreqErrorPreamble','curSymbolRateTimingErrorPreamble','agcFailure',
                    'modcod','chipRateMultiplicator','spreadingFactor',
-                   'agcFailure']    
+                   'agcFailure','iduPower']    
         
     for h in dfCrossList:       
         dfSubset.pipe(hrc.plot_xcor,h,'perProcent')  
