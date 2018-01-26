@@ -6,10 +6,12 @@ Created on Fri Jan 26 07:30:27 2018
 """
 
 from mpl_toolkits.basemap import Basemap
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime
+import matplotlib.dates as mdates
 import re
 
 
@@ -51,6 +53,43 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     ax.set_title(title)
     plt.show()
     
+    
+    
+# general purpose tool to plot a column(s) that contains strings  vs UTC time and SOF time (two x axis)
+def plot_str_utc(df, *arg): # argument is list of headers to be plotted    
+    colString = 'dateTimes '+arg[0];  
+    
+    dfSubset = df.loc[:,colString.split()];
+    dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
+    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    dfSubset.reindex(); # reindex after dropping   
+    
+    keys = dfSubset[arg[0]].unique() # labels in second argument
+    
+    ind = np.arange(len(keys)) # the y locations for the groups
+    width = 10.0       # the width of the tick separation
+    
+    dictionary = dict(zip(keys, ind))
+    print(dictionary)
+    dfSubset.replace({arg[0]: dictionary}) # replace the strings by their ind values used for plotting
+  
+    fig, ax1 = plt.subplots()
+   
+    ax1.set_yticks(ind + width / 2)
+    ax1.set_yticklabels(keys)  
+    
+       
+    plt.plot(dfSubset['dateTimes'],dfSubset[arg[0]],label=arg[0], marker='o') 
+    
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
+    plt.xlabel('time (UTC)')         
+    
+    plt.legend(loc='best') 
+    #ax1.yaxis.grid() # horizontal lines
+    #ax1.xaxis.grid() # vertical lines  
+    plt.grid()
+    plt.show() 
+    
 """
     make a dmm dataframe based on 
         "Response: \"GetMobileInfo\""
@@ -76,7 +115,7 @@ def mobile_info_to_dataframe(path, macstring=None):
     #print(mac_list_unique)
     print(str(len(mac_list_unique)) + ' unique mac addresses found')    
 
-    columns = ['dateTime','mac', 'located','activebeam','lat', 'long']
+    columns = ['dateTimes','mac', 'located','activebeam','lat', 'long']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     

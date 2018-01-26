@@ -13,8 +13,6 @@ import argparse
 import hrclogutils.dmm as dmm
 
 
-
-
 def main(argv):
     
     parser = argparse.ArgumentParser(description='script to check mobility flows related to a terminal')
@@ -39,11 +37,14 @@ def main(argv):
     print(df.head())
     df.to_csv('mobileInfoList.csv')        
     
-    #df.plot(x='long',y='lat',kind='scatter')
-    df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')
+    if macstring is None:
+        df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')
+    else:
+        df.pipe(dmm.scatter_on_basemap, title = ('GPS data from terminal '+ str(macstring)))
         
+        # visualise beam switches vs time
+        df.pipe(dmm.plot_str_utc,'activebeam')
         
-    
         
     
 if __name__ == "__main__":
