@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import argparse
 import hrclogutils.dmm as dmm
+import hrclogutils.basic as hrc
 
 
 def main(argv):
@@ -45,6 +46,8 @@ def main(argv):
         # visualise beam switches vs time
         df.pipe(dmm.plot_str_utc,'activebeam')
         
+        # visualise lat lon vs time
+        df.pipe(hrc.plot_utc,'lat','long')        
         
     
 if __name__ == "__main__":

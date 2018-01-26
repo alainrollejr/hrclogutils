@@ -159,7 +159,7 @@ def plot_utc(df, *arg): # argument is list of headers to be plotted
     fig, ax = plt.subplots()
     for parameterHeaderName in arg:
         v = dfSubset[parameterHeaderName].values
-        plt.plot(dfSubset['dateTimes'],v.astype(np.float),label=parameterHeaderName) 
+        plt.plot(dfSubset['dateTimes'],v.astype(np.float),label=parameterHeaderName, marker='o') 
     
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
     plt.xlabel('time (UTC)')   
