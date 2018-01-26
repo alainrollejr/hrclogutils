@@ -95,6 +95,8 @@ def mobile_info_to_dataframe(path, macstring=None):
             mobile_info_longitude = 0.0
             mobile_info_latitude = 0.0
             
+            terminal_match = False
+            
             for ind, element in enumerate(temp_list):
                 element = element.strip() # remove accidental white space from string
                 #print(str(ind) + "=" + element)
@@ -103,6 +105,7 @@ def mobile_info_to_dataframe(path, macstring=None):
                     mobile_info_mac = element
                     mobile_info_date = date
                     mobile_info_located = False
+                    terminal_match = True
                     
                     
                 if "operational/located" in element:
@@ -121,6 +124,9 @@ def mobile_info_to_dataframe(path, macstring=None):
                     row=pd.Series([mobile_info_date, mobile_info_mac,
                                    mobile_info_located,mobile_info_beam,
                                    mobile_info_latitude, mobile_info_longitude],columns)
-                    df = df.append([row],ignore_index=True)
+    
+                    if terminal_match == True:
+                        df = df.append([row],ignore_index=True)
+                        terminal_match = False
                     
     return df
