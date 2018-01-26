@@ -74,7 +74,7 @@ def main(argv):
     df = df.fillna(0) # with 0s rather than NaNs
     
     for line in file_content.splitlines():
-        if "Response: \"GetMobileInfoList\"" in line:
+        if "Response: \"GetMobileInfo\"" in line:
             date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")
             #date = parse(line[0:20]) 
             
