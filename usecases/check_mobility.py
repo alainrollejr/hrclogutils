@@ -15,6 +15,8 @@ import numpy as np
 import datetime
 from dateutil.parser import parse
 
+import hrclogutils.dmm as dmm
+
 import re
 
 
@@ -117,7 +119,9 @@ def main(argv):
             
     print(df.head())
     df.to_csv('mobileInfoList.csv')        
-    df.plot(x='long',y='lat',kind='scatter')
+    
+    #df.plot(x='long',y='lat',kind='scatter')
+    df.pipe(dmm.scatter_on_basemap)
         
         
     
