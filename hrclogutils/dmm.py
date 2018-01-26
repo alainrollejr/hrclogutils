@@ -67,27 +67,35 @@ def plot_str_utc(df, *arg): # argument is list of headers to be plotted
     keys = dfSubset[arg[0]].unique() # labels in second argument
     
     ind = np.arange(len(keys)) # the y locations for the groups
+    print(ind)
     width = 10.0       # the width of the tick separation
     
     dictionary = dict(zip(keys, ind))
     print(dictionary)
-    dfSubset.replace({arg[0]: dictionary}) # replace the strings by their ind values used for plotting
+    dfSubset.replace({arg[0]: dictionary}, inplace=True) # replace the strings by their ind values used for plotting
   
+    print(dfSubset.head())
+    
     fig, ax1 = plt.subplots()
    
-    ax1.set_yticks(ind + width / 2)
-    ax1.set_yticklabels(keys)  
+    
     
        
-    plt.plot(dfSubset['dateTimes'],dfSubset[arg[0]],label=arg[0], marker='o') 
+    line = ax1.plot(dfSubset['dateTimes'],dfSubset[arg[0]],label=arg[0], marker='o') 
     
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S\n\n%Y%m%d'))
-    plt.xlabel('time (UTC)')         
+    plt.xlabel('time (UTC)')   
+
+    #ax1.set_yticks(ind + width / 2)
+    #ax1.set_yticklabels(keys) 
+    ax1.set_yticks(ind)
+    ax1.set_yticklabels(keys)        
     
     plt.legend(loc='best') 
-    #ax1.yaxis.grid() # horizontal lines
-    #ax1.xaxis.grid() # vertical lines  
-    plt.grid()
+    
+    ax1.grid(b=True, which='major', color='b', linestyle='-')
+    
+    
     plt.show() 
     
 """
