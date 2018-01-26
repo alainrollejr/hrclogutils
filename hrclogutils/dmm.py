@@ -27,14 +27,22 @@ def scatter_on_basemap(df, title='scatter on basemap'):
                 rsphere=(6378137.00,6356752.3142),\
                 resolution='l',projection='merc',\
                 lat_0=40.,lon_0=-20.,lat_ts=20.)
-   
-    m.drawcoastlines()
-    m.fillcontinents()
+    """
+    m = Basemap(llcrnrlon=-180.,llcrnrlat=-70.,urcrnrlon=180.,urcrnrlat=80.,projection='merc')
+   """
+    m.drawcoastlines(zorder=0)
+    m.fillcontinents(zorder=0)
+    m.drawcountries()
+    m.drawstates()
+    
     # draw parallels
-    m.drawparallels(np.arange(10,90,20),labels=[1,1,0,1])
+    m.drawparallels(np.arange(-70,80,5),labels=[1,1,0,1])
+    
     # draw meridians
-    m.drawmeridians(np.arange(-180,180,30),labels=[1,1,0,1])
-    m.scatter(df['lat'],df['long'],3,marker='o',color='k')
+    m.drawmeridians(np.arange(-180,180,5),labels=[1,1,0,1])
+    
+    lons, lats = m(df['long'].values.astype(float), df['lat'].values.astype(float))
+    m.scatter(lons,lats,marker='D',color='m')
     
     ax.set_title(title)
     plt.show()
