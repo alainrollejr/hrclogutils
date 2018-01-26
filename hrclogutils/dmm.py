@@ -8,6 +8,10 @@ Created on Fri Jan 26 07:30:27 2018
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import datetime
+import re
+
 
 """
     if a dataframe contains lat and long columns, plot them on a basemap
@@ -46,3 +50,77 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     
     ax.set_title(title)
     plt.show()
+    
+"""
+    make a dmm dataframe based on 
+        "Response: \"GetMobileInfo\""
+    entries in dmm.log
+"""
+def mobile_info_to_dataframe(path, macstring=None):
+    with open(path,"r") as f:
+        #file_content = f.read().rstrip("\n") # if you don't want end of lines
+        file_content = f.read()       
+    
+    
+    """
+        first find all mac addresses
+    """
+    p = re.compile(r'([0-9a-f]{2}(?::[0-9a-f]{2}){5})', re.IGNORECASE)   
+
+    mac_list = re.findall(p, file_content)   
+    
+    if macstring is None:
+        mac_list_unique = set(mac_list) #convert list to a set
+    else:
+        mac_list_unique = [macstring]
+    #print(mac_list_unique)
+    print(str(len(mac_list_unique)) + ' unique mac addresses found')    
+
+    columns = ['dateTime','mac', 'located','activebeam','lat', 'long']
+    df = pd.DataFrame(columns=columns)
+    df = df.fillna(0) # with 0s rather than NaNs
+    
+    for line in file_content.splitlines():
+        if "Response: \"GetMobileInfo\"" in line:
+            date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")
+            #date = parse(line[0:20]) 
+            
+            temp_list = re.split("[{}=;\']+",line)
+            #print(temp_list)
+            
+            mobile_info_date = date
+            mobile_info_mac = "00:00:00:00:00:00"
+            mobile_info_located = False
+            mobile_info_beam = "dummybeam"
+            mobile_info_longitude = 0.0
+            mobile_info_latitude = 0.0
+            
+            for ind, element in enumerate(temp_list):
+                element = element.strip() # remove accidental white space from string
+                #print(str(ind) + "=" + element)
+                if element in mac_list_unique:
+                    # add a row to the dataframe
+                    mobile_info_mac = element
+                    mobile_info_date = date
+                    mobile_info_located = False
+                    
+                    
+                if "operational/located" in element:
+                    mobile_info_located = True
+                    
+                    
+                if "active-beam" in element:
+                    mobile_info_beam = temp_list[ind+1]
+                    
+                if "longitude" in element:
+                    mobile_info_longitude = float(temp_list[ind+1])
+                    
+                if "latitude" in element:
+                    mobile_info_latitude = float(temp_list[ind+1])                    
+                    # this was the last thing about this mac address we wanted to put in table row
+                    row=pd.Series([mobile_info_date, mobile_info_mac,
+                                   mobile_info_located,mobile_info_beam,
+                                   mobile_info_latitude, mobile_info_longitude],columns)
+                    df = df.append([row],ignore_index=True)
+                    
+    return df
