@@ -33,6 +33,8 @@ def main(argv):
         path="../sandbox/dmm.log"
         
     df = dmm.mobile_info_to_dataframe(path, macstring)   
+    
+    print(df['mac'].unique())
                     
             
     print(df.head())

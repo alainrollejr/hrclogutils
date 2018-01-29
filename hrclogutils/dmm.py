@@ -47,8 +47,21 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     # draw meridians
     m.drawmeridians(np.arange(-180,180,5),labels=[1,1,0,1])
     
-    lons, lats = m(df['long'].values.astype(float), df['lat'].values.astype(float))
-    m.scatter(lons,lats,marker='D',color='m')
+    macList = df['mac'].unique()
+    colorList = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    markerList = ['o', 'v','<','D','s','*']
+    
+    colorInd = 0
+    markerInd = 0
+    for mac in macList:
+        dfSubset = df[df['mac']==mac]
+    
+        lons, lats = m(dfSubset['long'].values.astype(float), dfSubset['lat'].values.astype(float))
+        m.scatter(lons,lats,marker=markerList[markerInd],color=colorList[colorInd])
+        print(str(mac) + ' color ' + colorList[colorInd] + ' marker ' + markerList[markerInd])
+        colorInd = (colorInd +1) % len(colorList)
+        markerInd = (markerInd +1) % len(markerList)
+        
     
     ax.set_title(title)
     plt.show()
