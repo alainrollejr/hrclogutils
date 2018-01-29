@@ -33,6 +33,7 @@ def load_csv_log(path,header_path):
 
     # convert time to datetime object'    
     df['dateTimes'] = pd.to_datetime(df['utc'], format='%Y%m%dT%H%M%S.%f')
+    df['dateTimes'] = df['dateTimes'].dt.round('S')
     return df
 
 
