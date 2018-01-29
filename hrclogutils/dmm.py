@@ -53,6 +53,7 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     
     colorInd = 0
     markerInd = 0
+    count = 0
     for mac in macList:
         dfSubset = df[df['mac']==mac]
     
@@ -61,9 +62,10 @@ def scatter_on_basemap(df, title='scatter on basemap'):
         print(str(mac) + ' color ' + colorList[colorInd] + ' marker ' + markerList[markerInd])
         colorInd = (colorInd +1) % len(colorList)
         markerInd = (markerInd +1) % len(markerList)
+        count = count + 1
         
     
-    ax.set_title(title)
+    ax.set_title(title + ' (' + str(count) + ' terminals shown)')
     plt.show()
     
     
