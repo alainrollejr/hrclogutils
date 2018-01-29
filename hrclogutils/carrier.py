@@ -6,6 +6,7 @@ Created on Mon Jan 15 15:42:42 2018
 """
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import hrclogutils.basic as hrc
 
 
@@ -62,6 +63,13 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
         
     for h in dfCrossList:       
         dfSubset.pipe(hrc.plot_xcor,h,'perProcent')  
+        
+    # now take a look at entries with significant packet loss only
+    dfHighLoss = dfSubset[dfSubset['perProcent'] > 10.0]
+    
+    # for those with high loss, show coordinates in modcod, idu power plane
+    dfHighLoss.pipe(hrc.plot_xcor,'modcod','iduPower');
+    plt.title('all dots have packet loss more than 10%')
         
 def terminal_averages(df, *arg):  # argument is list of columns to be evaluated (averaged) for the terminal overview
     colString = 'terminal '; 
