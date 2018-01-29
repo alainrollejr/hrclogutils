@@ -43,9 +43,17 @@ def main(argv):
     
     #print(df['dateTimes'].dt.round('S'))
     
-    dfPivot = pd.pivot_table(df,index=["sof","dateTimes"],columns=["terminal"], values=['curFreqOffset(Hz)'])
+    dfPivot = pd.pivot_table(df,index=["sof"],columns=["terminal"], values=['curFreqOffset(Hz)'])
     
     print(dfPivot.head())
+    
+    dfPivot.plot(grid=True, title="frequency offsets of all terminals")
+    
+    # first order difference
+    dfDifferential = dfPivot.diff()
+    print(dfDifferential.head())
+    
+    dfDifferential.plot(grid=True, title="1-sec frequency difference of all terminals")
 
 if __name__ == "__main__":
     main(sys.argv)
