@@ -16,7 +16,7 @@ import argparse
 
 def main(argv):
     
-    parser = argparse.ArgumentParser(description='script to check performance of a satnet (efficiency, esno, etc)')
+    parser = argparse.ArgumentParser(description='script to check frequency stability  of a satnet, by looking at common elements in tracked frequency offset of all terminals')
     
     parser.add_argument('-p','--path', help='path to sbc_carrier_tracking_monitor.csv', required=False)
     parser.add_argument('-c','--columns', help='path to sbc_carrier_tracking_monitor.headers', required=False)
