@@ -1,6 +1,8 @@
 For Ubuntu users:
 ------------------
 
+Requires Python 3.6 or higher
+
 sudo apt-get install python-pip
 sudo pip install wheel
 sudo pip install pandas
@@ -15,4 +17,5 @@ python check_powercontrol.py
 For windows users:
 ------------------
 recommended to install Anaconda and use the Spyder IDE for file editing and running
-for parsing DMM log files you need to run conda install Basemap
+for parsing DMM log files you need to run 
+conda install -c anaconda basemap

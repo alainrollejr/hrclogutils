@@ -15,6 +15,7 @@ import matplotlib.dates as mdates
 import re
 
 
+
 """
     if a dataframe contains lat and long columns, plot them on a basemap
 """
@@ -26,20 +27,21 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     
     llcrnrlon=min(df['long'])-5.
     llcrnrlat=min(df['lat'])-5.
-    urcrnrlon=max(df['long'])+5.
+    urcrnrlon=max(df['long'])+20. # leave room for legend
     urcrnrlat=max(df['lat'])+5.
     
     m = Basemap(llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,\
                 rsphere=(6378137.00,6356752.3142),\
                 resolution='l',projection='merc',\
                 lat_0=40.,lon_0=-20.,lat_ts=20.)
-    """
-    m = Basemap(llcrnrlon=-180.,llcrnrlat=-70.,urcrnrlon=180.,urcrnrlat=80.,projection='merc')
-   """
-    m.drawcoastlines(zorder=0)
-    m.fillcontinents(zorder=0)
+ 
+    
+    m.drawlsmask(land_color='palegreen', ocean_color='aqua') 
+    m.fillcontinents(color='palegreen',lake_color='blue',zorder=0)
     m.drawcountries()
     m.drawstates()
+    m.drawcoastlines()
+    
     
     # draw parallels
     m.drawparallels(np.arange(-70,80,5),labels=[1,1,0,1])
@@ -56,16 +58,17 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     count = 0
     for mac in macList:
         dfSubset = df[df['mac']==mac]
-    
+        labelString = str(mac)
         lons, lats = m(dfSubset['long'].values.astype(float), dfSubset['lat'].values.astype(float))
-        m.scatter(lons,lats,marker=markerList[markerInd],color=colorList[colorInd])
-        print(str(mac) + ' color ' + colorList[colorInd] + ' marker ' + markerList[markerInd])
+        m.plot(lons,lats,marker=markerList[markerInd],color=colorList[colorInd], label=labelString)
+        
         colorInd = (colorInd +1) % len(colorList)
         markerInd = (markerInd +1) % len(markerList)
         count = count + 1
         
     
     ax.set_title(title + ' (' + str(count) + ' terminals shown)')
+    plt.legend()
     plt.show()
     
     
