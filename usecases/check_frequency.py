@@ -7,6 +7,7 @@ Created on Sat Jan 13 23:53:29 2018
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import matplotlib.pyplot as plt
 
 import hrclogutils.basic as hrc
 import hrclogutils.carrier as carrier
@@ -48,12 +49,15 @@ def main(argv):
     print(dfPivot.head())
     
     dfPivot.plot(grid=True, title="frequency offsets of all terminals")
+    plt.show()
     
     # first order difference
     dfDifferential = dfPivot.diff()
     print(dfDifferential.head())
     
+    
     dfDifferential.plot(grid=True, title="1-sec frequency difference of all terminals")
+    plt.show()
 
 if __name__ == "__main__":
     main(sys.argv)
