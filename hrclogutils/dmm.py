@@ -71,6 +71,58 @@ def scatter_on_basemap(df, title='scatter on basemap'):
     plt.legend()
     plt.show()
     
+def beams_on_basemap(df, title='scatter on basemap'):
+    # create new figure, axes instances.
+    fig=plt.figure()
+    ax=fig.add_axes([0.1,0.1,0.8,0.8])
+    # setup mercator map projection.
+    
+    llcrnrlon=min(df['long'])-5.
+    llcrnrlat=min(df['lat'])-5.
+    urcrnrlon=max(df['long'])+20. # leave room for legend
+    urcrnrlat=max(df['lat'])+5.
+    
+    m = Basemap(llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,\
+                rsphere=(6378137.00,6356752.3142),\
+                resolution='l',projection='merc',\
+                lat_0=40.,lon_0=-20.,lat_ts=20.)
+ 
+    
+    m.drawlsmask(land_color='palegreen', ocean_color='aqua') 
+    m.fillcontinents(color='palegreen',lake_color='blue',zorder=0)
+    m.drawcountries()
+    m.drawstates()
+    m.drawcoastlines()
+    
+    
+    # draw parallels
+    m.drawparallels(np.arange(-70,80,5),labels=[1,1,0,1])
+    
+    # draw meridians
+    m.drawmeridians(np.arange(-180,180,5),labels=[1,1,0,1])
+    
+    beamList = df['activebeam'].unique()
+    colorList = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    markerList = ['o', 'v','<','D','s','*']
+    
+    colorInd = 0
+    markerInd = 0
+    count = 0
+    for beam in beamList:
+        dfSubset = df[df['activebeam']==beam]
+        labelString = str(beam)
+        lons, lats = m(dfSubset['long'].values.astype(float), dfSubset['lat'].values.astype(float))
+        m.scatter(lons,lats,marker=markerList[markerInd],color=colorList[colorInd], label=labelString)
+        
+        colorInd = (colorInd +1) % len(colorList)
+        markerInd = (markerInd +1) % len(markerList)
+        count = count + 1
+        
+    
+    ax.set_title(title + ' (' + str(count) + ' active beams shown)')
+    plt.legend()
+    plt.show()
+    
     
     
 # general purpose tool to plot a column(s) that contains strings  vs UTC time and SOF time (two x axis)

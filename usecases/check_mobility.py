@@ -42,6 +42,7 @@ def main(argv):
     
     if macstring is None:
         df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')
+        df.pipe(dmm.beams_on_basemap, title = 'GPS data from terminals')
     else:
         df.pipe(dmm.scatter_on_basemap, title = ('GPS data from terminal '+ str(macstring)))
         
