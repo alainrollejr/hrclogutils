@@ -38,7 +38,10 @@ def main(argv):
                     
             
     print(df.head())
-    df.to_csv('mobileInfoList.csv')        
+    df.to_csv('mobileInfoList.csv')     
+    
+    print(str(min(df['dateTimes'])))
+    print(str(max(df['dateTimes'])))
     
     if macstring is None:
         df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')

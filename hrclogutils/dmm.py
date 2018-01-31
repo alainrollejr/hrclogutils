@@ -67,8 +67,9 @@ def scatter_on_basemap(df, title='scatter on basemap'):
         count = count + 1
         
     
-    ax.set_title(title + ' (' + str(count) + ' terminals shown)')
-    plt.legend()
+    ax.set_title(title + ' (' + str(count) + ' terminals shown)\n'+ 'data taken from ' + str(min(df['dateTimes'])) + ' to ' + str(max(df['dateTimes'])))
+    if count < 35: # too much is too much, for a legend
+        plt.legend(loc='upper right')
     plt.show()
     
 def beams_on_basemap(df, title='scatter on basemap'):
@@ -119,8 +120,8 @@ def beams_on_basemap(df, title='scatter on basemap'):
         count = count + 1
         
     
-    ax.set_title(title + ' (' + str(count) + ' active beams shown)')
-    plt.legend()
+    ax.set_title(title + ' (' + str(count) + ' active beams shown)\n' + 'data taken from ' + str(min(df['dateTimes'])) + ' to ' + str(max(df['dateTimes'])))
+    plt.legend(loc='upper right')
     plt.show()
     
     
@@ -245,5 +246,7 @@ def mobile_info_to_dataframe(path, macstring=None):
                     if terminal_match == True:
                         df = df.append([row],ignore_index=True)
                         terminal_match = False
+                        
+    df['dateTimes'] = df['dateTimes'].dt.round('S')
                     
     return df
