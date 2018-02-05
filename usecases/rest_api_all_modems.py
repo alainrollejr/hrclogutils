@@ -37,32 +37,26 @@ def main(argv):
         password='D!@10g'   
 
     if url is None:
-        url= 'http://192.168.80.160/rest/modem/'
-    else:
-        url = url + 'rest/modem'
-        print(url)
+        url= 'http://192.168.80.160/'
+        
+    
+    urlstr = url + 'rest/modem'
+    print(urlstr)
         
     
     
-    r = requests.get(url, auth=(user, password))    
+    r = requests.get(urlstr, auth=(user, password))    
     rjson = r.json()  
     
  
     # the dataframe column headers
-    columns = ['mac', 'systemId','name','roaming', 'locked', 'attachmentType', 'attachmentProfile']
+    columns = ['mac', 'systemId','name','roaming', 'locked', 'attachmentType', 'attachmentProfile', 'satnet']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
-    for el in rjson: # each element is a dict(ionary)
+    for el in rjson: # each element is a dict(ionary)        
+        #print(el.keys()) # get all keys that you can query
         
-        print(el.keys()) # get all keys that you can query
-        
-        
-        
-        print(el["macAddress"])
-        print(el["id"]["systemId"])
-        print(el["id"]["name"])
-        print(el["beamRoamingEnabled"])
         attach = el["attachment"]
         typestr = attach["type"]
         if "DYNAMIC" in typestr:            
@@ -70,16 +64,46 @@ def main(argv):
         
             row=pd.Series([el["macAddress"], el["id"]["systemId"],
                            el["id"]["name"],el["beamRoamingEnabled"],
-                           el["locked"],attach["type"], attach["attachmentProfileId"]["name"]],columns)
+                           el["locked"],attach["type"], attach["attachmentProfileId"]["name"], ""],columns)
         else:
             row=pd.Series([el["macAddress"], el["id"]["systemId"],
                            el["id"]["name"],el["beamRoamingEnabled"],
-                           el["locked"],attach["type"], "none"],columns)
+                           el["locked"],attach["type"], "", attach["satelliteNetworkId"]["name"]],columns)
     
         df = df.append([row],ignore_index=True)
         
         
     print(df)
+    df.to_csv('modem_list.csv')
+    print(str(len(df.index)) + ' provisioned terminals found')
+    dfUnlocked = df[df["locked"]==False]
+    dfUnlocked = dfUnlocked.reset_index(drop=True)
+    print(str(len(dfUnlocked.index)) + ' unlocked terminals found')
+    
+    urlstr = url + 'rest/attachment-profile'
+    print(urlstr)
+    r = requests.get(urlstr, auth=(user, password))    
+    rjson = r.json() 
+    
+    # now get the relationship between attachment profiles and satnets
+    
+    attach_columns = ['attachmentProfile', 'satnet']
+    dfAttachments = pd.DataFrame(columns=attach_columns)
+    
+    for el in rjson:
+        print(el['id']['name'])
+        for subel in el["attachments"]:
+            print(subel["satelliteNetworkId"]["name"])
+            row = pd.Series([el['id']['name'],subel["satelliteNetworkId"]["name"]], attach_columns )
+            dfAttachments = dfAttachments.append([row],ignore_index=True)
+    
+    print(dfAttachments)
+    dfAttachments.to_csv('attachment_profiles.csv')
+   
+    
+    
+    
+    
         
     
 if __name__ == "__main__":

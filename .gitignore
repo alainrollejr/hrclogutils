@@ -9,3 +9,5 @@ usecases/spectrum-2018-01-17-T21-32-07.png
 sandbox/sbc_carrier_tracking_monitor.csv
 sandbox/sbc_rtce_monitor.csv
 *.log
+usecases/attachment_profiles.csv
+usecases/modem_list.csv
