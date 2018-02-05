@@ -49,7 +49,7 @@ def main(argv):
     
  
     # the dataframe column headers
-    columns = ['mac', 'systemId','name','roaming', 'locked']
+    columns = ['mac', 'systemId','name','roaming', 'locked', 'attachmentType', 'attachmentProfile']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -57,17 +57,27 @@ def main(argv):
         
         print(el.keys()) # get all keys that you can query
         
-        row=pd.Series([el["macAddress"], el["id"]["systemId"],
-                       el["id"]["name"],el["beamRoamingEnabled"],
-                       el["locked"]],columns)
-    
-        df = df.append([row],ignore_index=True)
+        
         
         print(el["macAddress"])
         print(el["id"]["systemId"])
         print(el["id"]["name"])
         print(el["beamRoamingEnabled"])
-        print(type(el["satelliteNetworkConfigurations"]))
+        attach = el["attachment"]
+        typestr = attach["type"]
+        if "DYNAMIC" in typestr:            
+            print(attach["attachmentProfileId"]["name"])
+        
+            row=pd.Series([el["macAddress"], el["id"]["systemId"],
+                           el["id"]["name"],el["beamRoamingEnabled"],
+                           el["locked"],attach["type"], attach["attachmentProfileId"]["name"]],columns)
+        else:
+            row=pd.Series([el["macAddress"], el["id"]["systemId"],
+                           el["id"]["name"],el["beamRoamingEnabled"],
+                           el["locked"],attach["type"], "none"],columns)
+    
+        df = df.append([row],ignore_index=True)
+        
         
     print(df)
         
