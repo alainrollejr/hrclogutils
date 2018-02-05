@@ -12,6 +12,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import argparse
 import hrclogutils.dmm as dmm
 import hrclogutils.basic as hrc
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def main(argv):
@@ -35,6 +37,10 @@ def main(argv):
     df = dmm.mobile_info_to_dataframe(path, macstring)   
     
     print(df['mac'].unique())
+    
+    dfCount = pd.pivot_table(df,index=['dateTimes'],values=['mac'],aggfunc="count")
+    dfCount.plot()
+    plt.show()
                     
             
     print(df.head())
