@@ -40,7 +40,7 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
     print(dfSubset.head())
     
     dfSubset.replace('', np.nan, inplace=True) #replace empty entries with Nan
-    dfSubset = dfSubset.dropna(axis=0); # drop all rows that contain Nan data, plot tools don't like them
+    
     dfSubset.reindex(); # reindex after dropping
     
     vDec = dfSubset['prevDecPackCnt'].values
@@ -55,6 +55,10 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
     dfSubset.pipe(hrc.plot_utc_sof,'perProcent')
     
     dfSubset.pipe(hrc.plot_utc_sof,'curFreqOffset(Hz)')
+    dfSubset.pipe(hrc.plot_utc_sof,'curEsNo(dB)')
+    dfSubset.pipe(hrc.plot_utc_sof,'spreadingFactor')
+    
+    #dfSubset.to_csv('terminal_' + idsubstring+'.csv')
     
     # create a list with columns worth retaining for a crosscorrelation
     dfCrossList = ['curEsNo(dB)','curFreqErrorPreamble','curSymbolRateTimingErrorPreamble','agcFailure',
@@ -63,6 +67,9 @@ def packet_error_analysis(idsubstring,    # only mandatory parameter
         
     for h in dfCrossList:       
         dfSubset.pipe(hrc.plot_xcor,h,'perProcent')  
+        
+    for h in dfCrossList:       
+        dfSubset.pipe(hrc.plot_xcor,h,'curEsNo(dB)')
         
     # now take a look at entries with significant packet loss only
     dfHighLoss = dfSubset[dfSubset['perProcent'] > 10.0]
