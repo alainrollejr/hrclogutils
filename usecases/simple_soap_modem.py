@@ -49,38 +49,46 @@ def main(argv):
     url = 'http://%s/API/V1/soap.asmx?wsdl' % ip
     interface = Client(url, username=username, password=password)
     connection = interface.service.ConnectApp('localhost', username, password, 'test', '?', '?')
-    trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'Modem Fwd Es/No', None, "LastDay")
     
+    
+    columns = ['dateTimes','fwd_esno(dB)']
+    df_fwd = pd.DataFrame(columns=columns)
+    df_fwd = df_fwd.fillna(0) # with 0s rather than NaNs
+    
+    trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'Modem Fwd Es/No', None, "LastDay")    
     print(len(trend.Data.double))
+    df_fwd['dateTimes'] = trend.Timestamps.dateTime
+    df_fwd['fwd_esno(dB)'] = trend.Data.double
+    print(df_fwd.head())
     
-    columns = ['dateTimes','fwd_esno(dB)','rtn_esno(dB)','fwd_throughput(kbps)']
-    df = pd.DataFrame(columns=columns)
-    df = df.fillna(0) # with 0s rather than NaNs
-    
-    df['dateTimes'] = trend.Timestamps.dateTime
-    df['fwd_esno(dB)'] = trend.Data.double
-    
+    columns = ['dateTimes','rtn_esno(dB)']
+    df_rtn = pd.DataFrame(columns=columns)
+    df_rtn = df_rtn.fillna(0) # with 0s rather than NaNs
     trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'HRC Es/No', None, "LastDay")
-    df['rtn_esno(dB)'] = trend.Data.double
-    print(len(trend.Data.double))
+    df_rtn['dateTimes'] = trend.Timestamps.dateTime
+    df_rtn['rtn_esno(dB)'] = trend.Data.double
+    print(len(trend.Data.double))    
     
-    print(df.head())
     
-    columns = ['dateTimes','fwd_throughput(kbps)','rtn_throughput(kbps)']
-    dfT = pd.DataFrame(columns=columns)
-    dfT = dfT.fillna(0) # with 0s rather than NaNs
+    columns = ['dateTimes','fwd_throughput(kbps)']
+    df_fwd_T = pd.DataFrame(columns=columns)
+    df_fwd_T = df_fwd_T.fillna(0) # with 0s rather than NaNs
     trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'Modem Total FWD Throughput', None, "LastDay")
     print(len(trend.Data.double))
     print(len(trend.Timestamps.dateTime))
-    dfT['dateTimes'] = trend.Timestamps.dateTime    
-    dfT['fwd_throughput(kbps)'] = trend.Data.double
+    df_fwd_T['dateTimes'] = trend.Timestamps.dateTime    
+    df_fwd_T['fwd_throughput(kbps)'] = trend.Data.double
+    print(df_fwd_T.head())  
     
+    columns = ['dateTimes','rtn_throughput(kbps)']
+    df_rtn_T = pd.DataFrame(columns=columns)
+    df_rtn_T = df_rtn_T.fillna(0) # with 0s rather than NaNs
     trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'Modem Total RTN Throughput', None, "LastDay")
     print(len(trend.Data.double))
     print(len(trend.Timestamps.dateTime))
-      
-    dfT['rtn_throughput(kbps)'] = trend.Data.double
-    print(dfT.head())  
+    df_rtn_T['dateTimes'] = trend.Timestamps.dateTime   
+    df_rtn_T['rtn_throughput(kbps)'] = trend.Data.double
+    print(df_rtn_T.head())  
     
     
     
