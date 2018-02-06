@@ -11,3 +11,4 @@ sandbox/sbc_rtce_monitor.csv
 *.log
 usecases/attachment_profiles.csv
 usecases/modem_list.csv
+*.csv

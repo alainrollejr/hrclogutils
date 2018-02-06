@@ -17,11 +17,11 @@ import pandas as pd
 def main(argv):   
     
     
-    parser = argparse.ArgumentParser(description='script to get all terminals from NMS, put into pandas dataframe')
+    parser = argparse.ArgumentParser(description='script to get all terminals from NMS, put into pandas dataframe. Generates following csv files: attachment_profiles.csv and modem_list.csv')
     
     parser.add_argument('-u','--user', help='user name (eg hno)', required=False)
     parser.add_argument('-p','--password', help='eg (D!@l0g', required=False)
-    parser.add_argument('-a','--url', help='url, eg http://192.168.86.20/', required=False)
+    parser.add_argument('-a','--url', help='url, eg http://192.168.86.20/ (mind the end / !)', required=False)
     
     args = vars(parser.parse_args())
     
@@ -60,7 +60,7 @@ def main(argv):
         attach = el["attachment"]
         typestr = attach["type"]
         if "DYNAMIC" in typestr:            
-            print(attach["attachmentProfileId"]["name"])
+            #print(attach["attachmentProfileId"]["name"])
         
             row=pd.Series([el["macAddress"], el["id"]["systemId"],
                            el["id"]["name"],el["beamRoamingEnabled"],
@@ -73,12 +73,19 @@ def main(argv):
         df = df.append([row],ignore_index=True)
         
         
-    print(df)
+    #print(df)
     df.to_csv('modem_list.csv')
     print(str(len(df.index)) + ' provisioned terminals found')
     dfUnlocked = df[df["locked"]==False]
     dfUnlocked = dfUnlocked.reset_index(drop=True)
-    print(str(len(dfUnlocked.index)) + ' unlocked terminals found')
+    print(str(len(dfUnlocked.index)) + ' unlocked terminals found, spread over profiles:')
+    
+    lut = {}
+    for profile in dfUnlocked['attachmentProfile'].unique():
+        #print(str(profile) + ': '+str(len(dfUnlocked[dfUnlocked['attachmentProfile']==profile])) + ' unlocked terminals')
+        lut[str(profile)] = len(dfUnlocked[dfUnlocked['attachmentProfile']==profile])
+    
+    print(lut)    
     
     urlstr = url + 'rest/attachment-profile'
     print(urlstr)
@@ -87,24 +94,27 @@ def main(argv):
     
     # now get the relationship between attachment profiles and satnets
     
-    attach_columns = ['attachmentProfile', 'satnet']
+    attach_columns = ['attachmentProfile', 'satnet','numberofmodems','numberunlocked']
     dfAttachments = pd.DataFrame(columns=attach_columns)
     
     for el in rjson:
-        print(el['id']['name'])
+        #print(el['id']['name'])
         for subel in el["attachments"]:
-            print(subel["satelliteNetworkId"]["name"])
-            row = pd.Series([el['id']['name'],subel["satelliteNetworkId"]["name"]], attach_columns )
+            #print(subel["satelliteNetworkId"]["name"])
+            
+            row = pd.Series([el['id']['name'],
+                             subel["satelliteNetworkId"]["name"],
+                             el['numberOfModems'],
+                             lut.get(el['id']['name'],0)], attach_columns ) # lut returns 0 if attachment profile has no unlocked terminals
             dfAttachments = dfAttachments.append([row],ignore_index=True)
     
-    print(dfAttachments)
+    #print(dfAttachments)
     dfAttachments.to_csv('attachment_profiles.csv')
-   
     
+    for satnet in dfAttachments['satnet'].unique():
+        print(str(satnet) + ' has ' + str(sum(dfAttachments[dfAttachments['satnet']==satnet]['numberunlocked'])) +' unlocked terminals')
     
-    
-    
-        
+       
     
 if __name__ == "__main__":
     main(sys.argv)
