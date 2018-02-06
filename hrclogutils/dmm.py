@@ -250,3 +250,55 @@ def mobile_info_to_dataframe(path, macstring=None):
     df['dateTimes'] = df['dateTimes'].dt.round('S')
                     
     return df
+
+"""
+    make a dmm dataframe based on 
+        Response: "GetStatistics"
+    entries in dmm.log
+"""
+def stats_to_dataframe(path):
+    with open(path,"r") as f:
+        #file_content = f.read().rstrip("\n") # if you don't want end of lines
+        file_content = f.read()       
+    
+     
+
+    columns = ['dateTimes','located','operational']
+    df = pd.DataFrame(columns=columns)
+    df = df.fillna(0) # with 0s rather than NaNs
+    
+    for line in file_content.splitlines():
+        if "Response: \"GetStatistics\"" in line:
+            date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")
+            #date = parse(line[0:20]) 
+            
+            temp_list = re.split("[{}=;\']+",line)
+            #print(temp_list)
+            
+            mobile_info_date = date            
+            mobile_info_located = -1
+            mobile_info_operational = -1
+            
+            
+            
+            for ind, element in enumerate(temp_list):
+                element = element.strip() # remove accidental white space from string
+                
+                    
+                if "located"==element:
+                    mobile_info_located = int(temp_list[ind+1])
+                    
+                    
+                if "operational"==element:
+                    mobile_info_operational = int(temp_list[ind+1])
+                    
+                
+                    row=pd.Series([mobile_info_date, mobile_info_located,
+                                   mobile_info_operational],columns)
+    
+                    
+                    df = df.append([row],ignore_index=True)
+                        
+    df['dateTimes'] = df['dateTimes'].dt.round('S')
+                    
+    return df

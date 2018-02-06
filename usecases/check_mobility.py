@@ -34,14 +34,13 @@ def main(argv):
     if path is None:        
         path="../sandbox/dmm.log"
         
+    dfStats = dmm.stats_to_dataframe(path)
+    print(dfStats.head())
+    dfStats.pipe(hrc.plot_utc,'located','operational')
+        
     df = dmm.mobile_info_to_dataframe(path, macstring)   
     
-    print(df['mac'].unique())
-    
-    dfCount = pd.pivot_table(df,index=['dateTimes'],values=['mac'],aggfunc="count")
-    dfCount.plot()
-    plt.show()
-                    
+    print(df['mac'].unique())                     
             
     print(df.head())
     df.to_csv('mobileInfoList.csv')     
