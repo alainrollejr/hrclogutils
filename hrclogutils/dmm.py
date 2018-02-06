@@ -263,7 +263,7 @@ def stats_to_dataframe(path):
     
      
 
-    columns = ['dateTimes','located','operational']
+    columns = ['dateTimes','located','operational','switch_request','switch_success']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -278,12 +278,19 @@ def stats_to_dataframe(path):
             mobile_info_date = date            
             mobile_info_located = -1
             mobile_info_operational = -1
+            mobile_info_switch_request = -1
+            mobile_info_switch_success = -1
             
             
             
             for ind, element in enumerate(temp_list):
                 element = element.strip() # remove accidental white space from string
                 
+                if "switch-request"==element:
+                    mobile_info_switch_request = int(temp_list[ind+1])
+                    
+                if "switch-success"==element:
+                    mobile_info_switch_success = int(temp_list[ind+1])
                     
                 if "located"==element:
                     mobile_info_located = int(temp_list[ind+1])
@@ -294,7 +301,7 @@ def stats_to_dataframe(path):
                     
                 
                     row=pd.Series([mobile_info_date, mobile_info_located,
-                                   mobile_info_operational],columns)
+                                   mobile_info_operational,mobile_info_switch_request,mobile_info_switch_success],columns)
     
                     
                     df = df.append([row],ignore_index=True)

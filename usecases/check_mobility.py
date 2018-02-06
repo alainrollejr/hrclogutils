@@ -37,6 +37,7 @@ def main(argv):
     dfStats = dmm.stats_to_dataframe(path)
     print(dfStats.head())
     dfStats.pipe(hrc.plot_utc,'located','operational')
+    dfStats.pipe(hrc.plot_utc,'switch_request','switch_success')
         
     df = dmm.mobile_info_to_dataframe(path, macstring)   
     
