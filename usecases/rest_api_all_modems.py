@@ -40,7 +40,7 @@ def main(argv):
         url= 'http://192.168.80.160/'
         
     
-    urlstr = url + 'rest/modem'
+    urlstr = url + 'rest/modem?limit=1000' #assumed never more than 1000 terminals
     print(urlstr)
         
     
