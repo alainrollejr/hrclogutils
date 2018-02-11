@@ -35,19 +35,19 @@ def main(argv):
         path="../sandbox/dmm.log"
         
     dfStats = dmm.stats_to_dataframe(path)
-    print(dfStats.head())
+    #print(dfStats.head())
     dfStats.pipe(hrc.plot_utc,'located','operational')
     dfStats.pipe(hrc.plot_utc,'switch_request','switch_success')
         
     df = dmm.mobile_info_to_dataframe(path, macstring)   
     
-    print(df['mac'].unique())                     
+    #print(df['mac'].unique())                     
             
-    print(df.head())
+    #print(df.head())
     df.to_csv('mobileInfoList.csv')     
     
-    print(str(min(df['dateTimes'])))
-    print(str(max(df['dateTimes'])))
+    #print(str(min(df['dateTimes'])))
+    #print(str(max(df['dateTimes'])))
     
     if macstring is None:
         df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')

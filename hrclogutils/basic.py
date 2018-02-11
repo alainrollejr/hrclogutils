@@ -67,7 +67,7 @@ def reduce(df, *arg):  # argument is list of columns to be retained
 def plot_utc_sof(df, *arg): # argument is list of headers to be plotted
     colString = 'dateTimes sof ';  
     for i in range(len(arg)):
-        print(arg[i]) 
+        #print(arg[i]) 
         colString += arg[i]+" "
   
     dfSubset = df.loc[:,colString.split()];
@@ -148,7 +148,7 @@ def plot_str_utc_sof(df, *arg): # argument is list of headers to be plotted
 def plot_utc(df, *arg): # argument is list of headers to be plotted
     colString = 'dateTimes ';  
     for i in range(len(arg)):
-        print(arg[i]) 
+        #print(arg[i]) 
         colString += arg[i]+" "
   
     dfSubset = df.loc[:,colString.split()];
@@ -173,7 +173,7 @@ def plot_utc(df, *arg): # argument is list of headers to be plotted
 def plot_sof(df, *arg):  # argument is list of headers to be plotted
     colString = 'sof '; 
     for i in range(len(arg)):
-        print(arg[i]) 
+        #print(arg[i]) 
         colString += arg[i]+" "
  
     dfSubset = df.loc[:,colString.split()];

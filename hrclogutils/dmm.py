@@ -60,14 +60,16 @@ def scatter_on_basemap(df, title='scatter on basemap'):
         dfSubset = df[df['mac']==mac]
         labelString = str(mac)
         lons, lats = m(dfSubset['long'].values.astype(float), dfSubset['lat'].values.astype(float))
+        print(str(mac) + ':' + str(len(lons)) + ' coordinates shown on map' )
         m.plot(lons,lats,marker=markerList[markerInd],color=colorList[colorInd], label=labelString)
         
         colorInd = (colorInd +1) % len(colorList)
         markerInd = (markerInd +1) % len(markerList)
         count = count + 1
         
-    
-    ax.set_title(title + ' (' + str(count) + ' terminals shown)\n'+ 'data taken from ' + str(min(df['dateTimes'])) + ' to ' + str(max(df['dateTimes'])))
+    title_str = title + ' (' + str(count) + ' terminals shown)\n' + 'data taken from ' + str(min(df['dateTimes'])) + ' to ' + str(max(df['dateTimes']))
+    ax.set_title(title_str)
+    print(title_str)
     if count < 35: # too much is too much, for a legend
         plt.legend(loc='upper right')
     plt.show()
@@ -138,14 +140,14 @@ def plot_str_utc(df, *arg): # argument is list of headers to be plotted
     keys = dfSubset[arg[0]].unique() # labels in second argument
     
     ind = np.arange(len(keys)) # the y locations for the groups
-    print(ind)
+    #print(ind)
     width = 10.0       # the width of the tick separation
     
     dictionary = dict(zip(keys, ind))
-    print(dictionary)
+    #print(dictionary)
     dfSubset.replace({arg[0]: dictionary}, inplace=True) # replace the strings by their ind values used for plotting
   
-    print(dfSubset.head())
+    #print(dfSubset.head())
     
     fig, ax1 = plt.subplots()
    
@@ -192,7 +194,7 @@ def mobile_info_to_dataframe(path, macstring=None):
     else:
         mac_list_unique = [macstring]
     #print(mac_list_unique)
-    print(str(len(mac_list_unique)) + ' unique mac addresses found')    
+    #print(str(len(mac_list_unique)) + ' unique mac addresses found')    
 
     columns = ['dateTimes','mac', 'located','activebeam','lat', 'long']
     df = pd.DataFrame(columns=columns)
