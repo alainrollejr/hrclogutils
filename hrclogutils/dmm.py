@@ -60,7 +60,7 @@ def scatter_on_basemap(df, title='scatter on basemap'):
         dfSubset = df[df['mac']==mac]
         labelString = str(mac)
         lons, lats = m(dfSubset['long'].values.astype(float), dfSubset['lat'].values.astype(float))
-        print(str(mac) + ':' + str(len(lons)) + ' coordinates shown on map' )
+        print(str(mac) + '  =>   ' + str(len(lons)) + ' coordinates shown on map' )
         m.plot(lons,lats,marker=markerList[markerInd],color=colorList[colorInd], label=labelString)
         
         colorInd = (colorInd +1) % len(colorList)
