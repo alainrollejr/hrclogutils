@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 
 def main(argv):
     
+    pd.options.mode.chained_assignment = None  # default='warn'
+    
     parser = argparse.ArgumentParser(description='script to check mobility flows related to a terminal')
     
     parser.add_argument('-m','--mac', help='mac address of terminal, eg -m 00:0d:2e:00:02:81 (no quotes !)', required=False)
@@ -51,20 +53,26 @@ def main(argv):
         dfChanges.pipe(hrc.plot_utc, 'operational')
     
         macList = dfChanges['mac'].unique()
-        columns = ['mac','nr_of_statechanges','median_time_between_changes']
+        columns = ['mac','nr_of_statechanges','median_time_operational','max_time_operational']
         dfChanges_stats = pd.DataFrame(columns=columns)
         dfChanges_stats = dfChanges_stats.fillna(0) # with 0s rather than NaNs
         
         for mac in macList:
-            dfSubset = dfChanges[dfChanges['mac']==mac]
-            nr_element = len(dfSubset)
+            dfSubset = dfChanges[dfChanges['mac']==mac]            
+            
             dfSubset['timediff'] = dfSubset['dateTimes'] - dfSubset['dateTimes'].shift(1)
+            dfSubset['opdiff'] = dfSubset['operational'] - dfSubset['operational'].shift(1)            
+            dfSubset = dfSubset[dfSubset['opdiff']==-1] #from operational to non operational
+            nr_element = len(dfSubset)
+            
+            timediff_max =  dfSubset['timediff'].max()            
             timediff_median = dfSubset['timediff'].median()
-            row=pd.Series([mac, nr_element,timediff_median],columns)
+            row=pd.Series([mac, nr_element,timediff_median, timediff_max],columns)
             dfChanges_stats = dfChanges_stats.append([row],ignore_index=True)
         
         dfChanges_stats = dfChanges_stats.sort_values(['nr_of_statechanges'], ascending=False)
         print(dfChanges_stats)
+        dfChanges_stats.to_csv('dmm_operational_changes.csv')
             
         dfStats = dmm.stats_to_dataframe(path)
         #print(dfStats.head())
@@ -82,16 +90,21 @@ def main(argv):
         dfChanges.pipe(hrc.plot_utc, 'operational')
     
         macList = dfChanges['mac'].unique()
-        columns = ['mac','nr_of_statechanges','median_time_between_changes']
+        columns = ['mac','nr_of_statechanges','median_time_operational','max_time_operational']
         dfChanges_stats = pd.DataFrame(columns=columns)
         dfChanges_stats = dfChanges_stats.fillna(0) # with 0s rather than NaNs
         
         for mac in macList:
-            dfSubset = dfChanges[dfChanges['mac']==mac]
-            nr_element = len(dfSubset)
+            dfSubset = dfChanges[dfChanges['mac']==mac]            
+            
             dfSubset['timediff'] = dfSubset['dateTimes'] - dfSubset['dateTimes'].shift(1)
+            dfSubset['opdiff'] = dfSubset['operational'] - dfSubset['operational'].shift(1)            
+            dfSubset = dfSubset[dfSubset['opdiff']==-1] #from operational to non operational
+            nr_element = len(dfSubset)
+            
+            timediff_max =  dfSubset['timediff'].max()            
             timediff_median = dfSubset['timediff'].median()
-            row=pd.Series([mac, nr_element,timediff_median],columns)
+            row=pd.Series([mac, nr_element,timediff_median, timediff_max],columns)
             dfChanges_stats = dfChanges_stats.append([row],ignore_index=True)
             
         print(dfChanges_stats.head())
