@@ -25,42 +25,38 @@ def main(argv):
     
     args = vars(parser.parse_args())
    
-    
     macstring = args['mac']
     
     path = args['path']
-    
-        
+       
     if path is None:        
         path="../sandbox/dmm.log"
         
     dfAnomaly = dmm.anomalies_to_dataframe(path)
     if len(dfAnomaly) > 0:
         dfAnomaly.to_csv('dmm_anomalies.csv')
-        
+  
     dfChanges = dmm.changes_to_dataframe(path, macstring)
-    if len(dfChanges) > 0:
-        dfChanges.to_csv('dmm_changes.csv')
-        
-    dfStats = dmm.stats_to_dataframe(path)
-    #print(dfStats.head())
-    dfStats.pipe(hrc.plot_utc,'located','operational')
-    dfStats.pipe(hrc.plot_utc,'switch_request','switch_success')
-        
+    
     df = dmm.mobile_info_to_dataframe(path, macstring)   
-    
-    #print(df['mac'].unique())                     
-            
-    #print(df.head())
+   
     df.to_csv('mobileInfoList.csv')    
-    
-       
-    #print(str(min(df['dateTimes'])))
-    #print(str(max(df['dateTimes'])))
+ 
     
     if macstring is None:
         df.pipe(dmm.scatter_on_basemap, title = 'GPS data from terminals')
         df.pipe(dmm.beams_on_basemap, title = 'GPS data from terminals')
+        
+        print(" ")
+        print("nr of state changes (operational/nonoperational) sorted per mac (high numbers are suspicious and point at RF issues and flapping)")
+        print("=================================================================================================================================")
+        dfChanges_freq = dfChanges['mac'].value_counts()
+        print(dfChanges_freq)
+            
+        dfStats = dmm.stats_to_dataframe(path)
+        #print(dfStats.head())
+        dfStats.pipe(hrc.plot_utc,'located','operational')
+        dfStats.pipe(hrc.plot_utc,'switch_request','switch_success')
     else:
         df.pipe(dmm.scatter_on_basemap, title = ('GPS data from terminal '+ str(macstring)))
         
@@ -68,7 +64,9 @@ def main(argv):
         df.pipe(dmm.plot_str_utc,'activebeam')
         
         # visualise lat lon vs time
-        df.pipe(hrc.plot_utc,'lat','long')        
+        df.pipe(hrc.plot_utc,'lat','long')  
+        
+        dfChanges.pipe(hrc.plot_utc, 'operational')
         
     
 if __name__ == "__main__":
