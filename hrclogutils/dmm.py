@@ -377,28 +377,29 @@ def changes_to_dataframe(path, macstring=None):
     
     for line in file_content.splitlines():
         if "changes" in line:
-            for mac in mac_list_unique:
-                if mac in line:
-                    date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
-      
-                    mobile_info_mac = mac
-                    mobile_info_date = date
-                                           
-                     
-                    if "nonoperational" in line:
-                        mobile_info_operational = 0
-                    else:
-                        mobile_info_operational = 1
-                        
-                    if "unlocated" in line:
-                        mobile_info_located = 0
-                    else:
-                        mobile_info_located = 1
+            if "terminalNoTxZone" not in line:
+                for mac in mac_list_unique:
+                    if mac in line:
+                        date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
+          
+                        mobile_info_mac = mac
+                        mobile_info_date = date
+                                               
                          
-                     
-                    row=pd.Series([mobile_info_date, mobile_info_mac,
-                                   mobile_info_operational, mobile_info_located],columns)
-                    df = df.append([row],ignore_index=True)                 
+                        if "nonoperational" in line:
+                            mobile_info_operational = 0
+                        else:
+                            mobile_info_operational = 1
+                            
+                        if "unlocated" in line:
+                            mobile_info_located = 0
+                        else:
+                            mobile_info_located = 1
+                             
+                         
+                        row=pd.Series([mobile_info_date, mobile_info_mac,
+                                       mobile_info_operational, mobile_info_located],columns)
+                        df = df.append([row],ignore_index=True)                 
            
       
         
