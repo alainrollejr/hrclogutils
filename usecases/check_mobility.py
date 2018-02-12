@@ -34,6 +34,10 @@ def main(argv):
     if path is None:        
         path="../sandbox/dmm.log"
         
+    dfAnomaly = dmm.anomalies_to_dataframe(path)
+    if len(dfAnomaly) > 0:
+        dfAnomaly.to_csv('dmm_anomalies.csv')
+        
     dfStats = dmm.stats_to_dataframe(path)
     #print(dfStats.head())
     dfStats.pipe(hrc.plot_utc,'located','operational')
@@ -44,8 +48,9 @@ def main(argv):
     #print(df['mac'].unique())                     
             
     #print(df.head())
-    df.to_csv('mobileInfoList.csv')     
+    df.to_csv('mobileInfoList.csv')    
     
+       
     #print(str(min(df['dateTimes'])))
     #print(str(max(df['dateTimes'])))
     

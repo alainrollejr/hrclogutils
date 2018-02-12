@@ -175,6 +175,14 @@ def plot_str_utc(df, *arg): # argument is list of headers to be plotted
     make a dmm dataframe based on 
         "Response: \"GetMobileInfo\""
     entries in dmm.log
+    
+    Note: 
+        GetMobileinfo gets called by PAC statera quite irregularly per MAC.
+        it may come every 15sec or every hour
+        Other calls like GetMobileInfoList or GetMobileInfoStats come regularly
+        but the dmm log abbreviates the large response to them, making it difficult to
+        use the log lines for getting useful info for all terminals.
+        other candidates 
 """
 def mobile_info_to_dataframe(path, macstring=None):
     with open(path,"r") as f:
@@ -309,5 +317,37 @@ def stats_to_dataframe(path):
                     df = df.append([row],ignore_index=True)
                         
     df['dateTimes'] = df['dateTimes'].dt.round('S')
+                    
+    return df
+
+"""
+    make a  dataframe based on anomalies in the log file
+"""
+def anomalies_to_dataframe(path):
+    with open(path,"r") as f:
+        #file_content = f.read().rstrip("\n") # if you don't want end of lines
+        file_content = f.read()       
+
+    columns = ['dateTimes','error']
+    df = pd.DataFrame(columns=columns)
+    df = df.fillna(0) # with 0s rather than NaNs
+    
+    for line in file_content.splitlines():
+        if "disconnected" in line:
+            date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")   
+            error_str = line[21:-1]   
+            row=pd.Series([date, error_str],columns)                    
+            df = df.append([row],ignore_index=True)
+            print(line)
+            
+        if "Failure" in line:
+            date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")   
+            error_str = line[21:-1]   
+            row=pd.Series([date, error_str],columns)                    
+            df = df.append([row],ignore_index=True)
+            print(line)
+            
+    if len(df) > 0:                    
+        df['dateTimes'] = df['dateTimes'].dt.round('S')
                     
     return df
