@@ -38,6 +38,10 @@ def main(argv):
     if len(dfAnomaly) > 0:
         dfAnomaly.to_csv('dmm_anomalies.csv')
         
+    dfChanges = dmm.changes_to_dataframe(path, macstring)
+    if len(dfChanges) > 0:
+        dfChanges.to_csv('dmm_changes.csv')
+        
     dfStats = dmm.stats_to_dataframe(path)
     #print(dfStats.head())
     dfStats.pipe(hrc.plot_utc,'located','operational')
