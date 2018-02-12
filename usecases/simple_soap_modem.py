@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import argparse
 import pandas as pd
 from suds.client import Client
+import hrclogutils.basic as hrc
 
 
 def main(argv):   
@@ -60,14 +61,16 @@ def main(argv):
     df_fwd['dateTimes'] = trend.Timestamps.dateTime
     df_fwd['fwd_esno(dB)'] = trend.Data.double
     print(df_fwd.head())
+    df_fwd.pipe(hrc.plot_utc,'fwd_esno(dB)')
     
-    columns = ['dateTimes','rtn_esno(dB)']
+    columns = ['dateTimes','rtn_cond(dB)']
     df_rtn = pd.DataFrame(columns=columns)
     df_rtn = df_rtn.fillna(0) # with 0s rather than NaNs
-    trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'HRC Es/No', None, "LastDay")
+    trend = interface.service.GetTrendDataForParameterByName(connection, modem, 'HRC CoND', None, "LastDay")
     df_rtn['dateTimes'] = trend.Timestamps.dateTime
-    df_rtn['rtn_esno(dB)'] = trend.Data.double
+    df_rtn['rtn_cond(dB)'] = trend.Data.double
     print(len(trend.Data.double))    
+    df_rtn.pipe(hrc.plot_utc,'rtn_cond(dB)')
     
     
     columns = ['dateTimes','fwd_throughput(kbps)']
@@ -79,6 +82,7 @@ def main(argv):
     df_fwd_T['dateTimes'] = trend.Timestamps.dateTime    
     df_fwd_T['fwd_throughput(kbps)'] = trend.Data.double
     print(df_fwd_T.head())  
+    df_fwd_T.pipe(hrc.plot_utc,'fwd_throughput(kbps)')
     
     columns = ['dateTimes','rtn_throughput(kbps)']
     df_rtn_T = pd.DataFrame(columns=columns)
@@ -88,7 +92,9 @@ def main(argv):
     print(len(trend.Timestamps.dateTime))
     df_rtn_T['dateTimes'] = trend.Timestamps.dateTime   
     df_rtn_T['rtn_throughput(kbps)'] = trend.Data.double
-    print(df_rtn_T.head())  
+    print(df_rtn_T.head()) 
+   
+    df_rtn_T.pipe(hrc.plot_utc,'rtn_throughput(kbps)')
     
     
     
