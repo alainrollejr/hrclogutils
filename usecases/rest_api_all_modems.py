@@ -17,7 +17,7 @@ import pandas as pd
 def main(argv):   
     
     
-    parser = argparse.ArgumentParser(description='script to get all terminals from NMS, put into pandas dataframe. Generates following csv files: attachment_profiles.csv and modem_list.csv')
+    parser = argparse.ArgumentParser(description='script to get all terminals from NMS, put into pandas dataframe. Generates following csv files: attachment_profiles.csv,  modem_list.csv and  beams_and_satnets.csv')
     
     parser.add_argument('-u','--user', help='user name (eg hno)', required=False)
     parser.add_argument('-p','--password', help='eg (D!@l0g', required=False)
@@ -114,7 +114,21 @@ def main(argv):
     for satnet in dfAttachments['satnet'].unique():
         print(str(satnet) + ' has ' + str(sum(dfAttachments[dfAttachments['satnet']==satnet]['numberunlocked'])) +' unlocked terminals')
     
-       
+    # now get relationship between beams and satnets:
+    beam_columns = ['beam', 'satnet']
+    dfBeams = pd.DataFrame(columns=beam_columns)
+    
+    urlstr = url + 'rest/satellite-network/collect?property=id&property=beamId'
+    print(urlstr)
+    r = requests.get(urlstr, auth=(user, password))    
+    rjson = r.json() 
+    #print(rjson)
+    for el in rjson:
+        row = pd.Series([el['beamId']['name'], el['id']['name']], beam_columns ) # lut returns 0 if attachment profile has no unlocked terminals
+        dfBeams = dfBeams.append([row],ignore_index=True)
+    print(dfBeams)
+    dfBeams.to_csv('beams_and_satnets.csv')
+    
     
 if __name__ == "__main__":
     main(sys.argv)
