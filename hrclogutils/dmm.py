@@ -177,12 +177,13 @@ def plot_str_utc(df, *arg): # argument is list of headers to be plotted
     entries in dmm.log
     
     Note: 
-        GetMobileinfo gets called by PAC statera quite irregularly per MAC.
-        it may come every 15sec or every hour
-        Other calls like GetMobileInfoList or GetMobileInfoStats come regularly
+        GetMobileinfo gets called by PAC statera quite irregularly per MAC, basically
+        whenever the DMM itself has published a state change for that MAC address.
+        Therefore it may come every 15sec or every hour
+        Other calls like GetMobileInfoList or GetMobileInfoStats come more regularly
         but the dmm log abbreviates the large response to them, making it difficult to
-        use the log lines for getting useful info for all terminals.
-        other candidates 
+        use the log lines for getting useful GPS info for all terminals.
+        
 """
 def mobile_info_to_dataframe(path, macstring=None):
     with open(path,"r") as f:
