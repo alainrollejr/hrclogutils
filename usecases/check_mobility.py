@@ -87,7 +87,7 @@ def main(argv):
         # visualise lat lon vs time
         df.pipe(hrc.plot_utc,'lat','long')  
         
-        dfChanges.pipe(hrc.plot_utc, 'operational')
+        dfChanges.pipe(hrc.plot_utc, 'operational', 'located')
     
         macList = dfChanges['mac'].unique()
         columns = ['mac','nr_of_statechanges','median_time_operational','max_time_operational']
