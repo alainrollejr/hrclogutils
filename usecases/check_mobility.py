@@ -126,16 +126,7 @@ def main(argv):
         dfChanges_stats['max_seconds_operational'] = dfChanges_stats['max_time_operational'].dt.total_seconds()
         print(dfChanges_stats.head())
         dfChanges_stats.to_csv('dmm_operational_changes.csv')
-        dfChanges_stats.hist(column='median_seconds_operational',bins=1000)
-        plt.title('median time a terminal stays operational without interrupt')
-        plt.xlabel('time (seconds)')
-        plt.ylabel('nr of terminals')
-        plt.show()
-        dfChanges_stats.hist(column='max_seconds_operational',bins=1000)
-        plt.title('maximum time a terminal stays operational without interrupt')
-        plt.xlabel('time (seconds)')
-        plt.ylabel('nr of terminals')
-        plt.show()
+       
     
 if __name__ == "__main__":
     main(sys.argv)
