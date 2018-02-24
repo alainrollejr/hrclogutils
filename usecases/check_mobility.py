@@ -71,8 +71,21 @@ def main(argv):
             dfChanges_stats = dfChanges_stats.append([row],ignore_index=True)
         
         dfChanges_stats = dfChanges_stats.sort_values(['nr_of_statechanges'], ascending=False)
-        print(dfChanges_stats)
+        dfChanges_stats = dfChanges_stats.dropna(axis=0)
+        dfChanges_stats['median_seconds_operational'] = dfChanges_stats['median_time_operational'].dt.total_seconds()
+        dfChanges_stats['max_seconds_operational'] = dfChanges_stats['max_time_operational'].dt.total_seconds()
+        print(dfChanges_stats.head())
         dfChanges_stats.to_csv('dmm_operational_changes.csv')
+        dfChanges_stats.hist(column='median_seconds_operational',bins=1000)
+        plt.title('median time a terminal stays operational without interrupt')
+        plt.xlabel('time (seconds)')
+        plt.ylabel('nr of terminals')
+        plt.show()
+        dfChanges_stats.hist(column='max_seconds_operational',bins=1000)
+        plt.title('maximum time a terminal stays operational without interrupt')
+        plt.xlabel('time (seconds)')
+        plt.ylabel('nr of terminals')
+        plt.show()
             
         dfStats = dmm.stats_to_dataframe(path)
         #print(dfStats.head())
@@ -92,7 +105,7 @@ def main(argv):
         macList = dfChanges['mac'].unique()
         columns = ['mac','nr_of_statechanges','median_time_operational','max_time_operational']
         dfChanges_stats = pd.DataFrame(columns=columns)
-        dfChanges_stats = dfChanges_stats.fillna(0) # with 0s rather than NaNs
+        dfChanges_stats = dfChanges_stats.fillna(0) # with 0s rather than NaNs        
         
         for mac in macList:
             dfSubset = dfChanges[dfChanges['mac']==mac]            
@@ -108,6 +121,21 @@ def main(argv):
             dfChanges_stats = dfChanges_stats.append([row],ignore_index=True)
             
         print(dfChanges_stats.head())
+        dfChanges_stats = dfChanges_stats.dropna(axis=0)
+        dfChanges_stats['median_seconds_operational'] = dfChanges_stats['median_time_operational'].dt.total_seconds()
+        dfChanges_stats['max_seconds_operational'] = dfChanges_stats['max_time_operational'].dt.total_seconds()
+        print(dfChanges_stats.head())
+        dfChanges_stats.to_csv('dmm_operational_changes.csv')
+        dfChanges_stats.hist(column='median_seconds_operational',bins=1000)
+        plt.title('median time a terminal stays operational without interrupt')
+        plt.xlabel('time (seconds)')
+        plt.ylabel('nr of terminals')
+        plt.show()
+        dfChanges_stats.hist(column='max_seconds_operational',bins=1000)
+        plt.title('maximum time a terminal stays operational without interrupt')
+        plt.xlabel('time (seconds)')
+        plt.ylabel('nr of terminals')
+        plt.show()
     
 if __name__ == "__main__":
     main(sys.argv)
