@@ -96,7 +96,7 @@ def main(argv):
             print("\n")
     
     dfChanges = dfChanges.sort_values(by='dateTimes',ascending=True)
-    dfChanges.to_csv('input_for_sla.csv')
+    dfChanges.to_csv('input_for_sla.csv', index=False)
         
     
     
