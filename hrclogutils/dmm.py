@@ -372,7 +372,7 @@ def changes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located']
+    columns = ['dateTimes','mac','operational','located','flightradar_status','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -399,7 +399,7 @@ def changes_to_dataframe(path, macstring=None):
                              
                          
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       mobile_info_operational, mobile_info_located],columns)
+                                       mobile_info_operational, mobile_info_located,'',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       

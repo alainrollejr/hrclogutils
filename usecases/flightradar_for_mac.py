@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import argparse
+import hrclogutils.dmm as dmm
 import hrclogutils.basic as hrc
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -41,6 +42,12 @@ def main(argv):
     mac = args['mac']
     
     path = args['path']
+    
+    columns = ['dateTimes','mac','operational','located','flightradar_status','airport']
+    dfChanges = dmm.changes_to_dataframe(path, mac)
+    
+    #df = dmm.mobile_info_to_dataframe(path, mac)
+    
     path_to_modem_list = args['modemlist']
     
     tail =get_flightradar_info_for_mac(mac,path_to_modem_list)
@@ -60,9 +67,9 @@ def main(argv):
         status = item["status"]["generic"]["status"]["text"]
         
         if status == "landed": # everything else is scheduled or estimated
-            print('from :' + str(item["airport"]["origin"]["name"]))
-            print('to: ' + str(item["airport"]["destination"]["name"]))
-            print('status: ' + str(status))
+            from_airport = str(item["airport"]["origin"]["name"])
+            to_airport = str(item["airport"]["destination"]["name"])
+            
             
             try:
                 departure_utc = datetime.utcfromtimestamp(int(item["time"]["real"]["departure"]))
@@ -77,14 +84,21 @@ def main(argv):
                 arrival_known = False
             
             if departure_known:
-                print("departure " + str(departure_utc))
+                row=pd.Series([departure_utc, mac,'','',"departure",from_airport],columns)
+                dfChanges = dfChanges.append([row],ignore_index=True)
+                #print("departure " + str(departure_utc))
                 
             if arrival_known:
-                print("arrival " + str(arrival_utc))
+                row=pd.Series([arrival_utc, mac,'','',"arrival",to_airport],columns)
+                dfChanges = dfChanges.append([row],ignore_index=True)
+                #print("arrival " + str(arrival_utc))
             
             print("\n")
-            
-    print(len(rjson))
+    
+    dfChanges = dfChanges.sort_values(by='dateTimes',ascending=True)
+    dfChanges.to_csv('input_for_sla.csv')
+        
+    
     
        
     
