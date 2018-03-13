@@ -12,3 +12,4 @@ sandbox/sbc_rtce_monitor.csv
 usecases/attachment_profiles.csv
 usecases/modem_list.csv
 *.csv
+usecases/gettail.py

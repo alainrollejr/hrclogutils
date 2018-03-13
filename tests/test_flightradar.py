@@ -14,7 +14,7 @@ from pyflightdata import FlightData
 
 api=FlightData()
 
-max_nr_entries = 20
+max_nr_entries = 100
 r = api.get_history_by_tail_number('N812UA')[-max_nr_entries:]
 
 m = json.dumps(r)
@@ -50,4 +50,6 @@ for item in rjson:
             print("arrival " + str(arrival_utc))
         
         print("\n")
+        
+print(len(rjson))
     

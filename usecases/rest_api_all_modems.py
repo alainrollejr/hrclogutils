@@ -12,7 +12,15 @@ import requests
 import argparse
 import pandas as pd
 
-
+def get_tail_from_name(name):
+    
+    sections = name.split("_")
+    
+    for section in sections:       
+        if len(section) > 0:
+            if section[0]=='N':
+                return section
+         
 
 def main(argv):   
     
@@ -50,7 +58,7 @@ def main(argv):
     
  
     # the dataframe column headers
-    columns = ['mac', 'systemId','name','roaming', 'locked', 'attachmentType', 'attachmentProfile', 'satnet']
+    columns = ['mac', 'systemId','name','tail','roaming', 'locked', 'attachmentType', 'attachmentProfile', 'satnet']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -59,15 +67,17 @@ def main(argv):
         
         attach = el["attachment"]
         typestr = attach["type"]
+        name = el["id"]["name"]
+        tail = get_tail_from_name(name)
         if "DYNAMIC" in typestr:            
             #print(attach["attachmentProfileId"]["name"])
         
             row=pd.Series([el["macAddress"], el["id"]["systemId"],
-                           el["id"]["name"],el["beamRoamingEnabled"],
+                           name,tail,el["beamRoamingEnabled"],
                            el["locked"],attach["type"], attach["attachmentProfileId"]["name"], ""],columns)
         else:
             row=pd.Series([el["macAddress"], el["id"]["systemId"],
-                           el["id"]["name"],el["beamRoamingEnabled"],
+                           name,tail,el["beamRoamingEnabled"],
                            el["locked"],attach["type"], "", attach["satelliteNetworkId"]["name"]],columns)
     
         df = df.append([row],ignore_index=True)
