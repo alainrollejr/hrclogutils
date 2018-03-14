@@ -43,7 +43,7 @@ def main(argv):
     
     path = args['path']
     
-    columns = ['dateTimes','mac','operational','located','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','tx muted','flightradar_status','airport']
     dfChanges = dmm.changes_to_dataframe(path, mac)
     
     #df = dmm.mobile_info_to_dataframe(path, mac)
@@ -84,19 +84,30 @@ def main(argv):
                 arrival_known = False
             
             if departure_known:
-                row=pd.Series([departure_utc, mac,'','',"departure",from_airport],columns)
+                row=pd.Series([departure_utc, mac,'','','',"departure",from_airport],columns)
                 dfChanges = dfChanges.append([row],ignore_index=True)
                 #print("departure " + str(departure_utc))
                 
             if arrival_known:
-                row=pd.Series([arrival_utc, mac,'','',"arrival",to_airport],columns)
+                row=pd.Series([arrival_utc, mac,'','','',"arrival",to_airport],columns)
                 dfChanges = dfChanges.append([row],ignore_index=True)
                 #print("arrival " + str(arrival_utc))
             
             print("\n")
+            
+            
+    # TODO: add beam switch events
+    # 18/03/11-23:21:54.618 [I] [ility.DMM.Mobile.Fsm] 00:0d:2e:00:06:74 performs switch to beam 'BEAM_AMZ2_W02_0003' (active-beam: 'BEAM_AMC15_W06_0027')
     
-    dfChanges = dfChanges.sort_values(by='dateTimes',ascending=True)
-    dfChanges.to_csv('input_for_sla.csv', index=False)
+    # TODO: add no TX zone notifs
+    # which actually come from modem and encompass ALL mute events (RX lock loss, discrete/SW mute by BC etc)
+    # 18/03/11-18:03:16.191 [D] [bility.DMM.Publisher] Publishing 1 no tx zone changes to 1 subscribers. content="{"changes":[{"00:0d:2e:00:05:c8":{"endTime":1520791112398,"startTime":1520791108250}}],"timestamp":1520791395691,"type":"terminalNoTxZone"}"
+    dfMutes = dmm.txmutes_to_dataframe(path, mac)
+    
+    dfSLA = pd.concat([dfMutes,dfChanges])
+    
+    dfSLA = dfSLA.sort_values(by='dateTimes',ascending=True)
+    dfSLA.to_csv('input_for_sla.csv', index=False)
         
     
     

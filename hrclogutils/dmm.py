@@ -372,7 +372,7 @@ def changes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','tx muted','flightradar_status','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -399,7 +399,7 @@ def changes_to_dataframe(path, macstring=None):
                              
                          
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       mobile_info_operational, mobile_info_located,'',''],columns)
+                                       mobile_info_operational, mobile_info_located,'','',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       
@@ -409,5 +409,53 @@ def changes_to_dataframe(path, macstring=None):
         df['dateTimes'] = df['dateTimes'].dt.round('S')
     else:
         print('no changes found')
+                    
+    return df
+
+def txmutes_to_dataframe(path, macstring=None):
+    with open(path,"r") as f:
+        #file_content = f.read().rstrip("\n") # if you don't want end of lines
+        file_content = f.read()     
+        
+    """
+        first find all mac addresses
+    """
+    p = re.compile(r'([0-9a-f]{2}(?::[0-9a-f]{2}){5})', re.IGNORECASE)   
+
+    mac_list = re.findall(p, file_content)   
+    
+    if macstring is None:
+        mac_list_unique = set(mac_list) #convert list to a set
+    else:
+        mac_list_unique = [macstring]
+        
+    #print(mac_list_unique)
+
+    columns = ['dateTimes','mac','operational','located','tx muted','flightradar_status','airport']
+    df = pd.DataFrame(columns=columns)
+    df = df.fillna(0) # with 0s rather than NaNs
+    
+    for line in file_content.splitlines():
+        if "changes" in line:
+            if "terminalNoTxZone" in line:
+                for mac in mac_list_unique:
+                    if mac in line:
+                        date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
+          
+                        mobile_info_mac = mac
+                        mobile_info_date = date              
+                         
+        
+                        row=pd.Series([mobile_info_date, mobile_info_mac,
+                                       '', '','tx mute','',''],columns)
+                        df = df.append([row],ignore_index=True)                 
+           
+      
+        
+            
+    if len(df) > 0:                    
+        df['dateTimes'] = df['dateTimes'].dt.round('S')
+    else:
+        print('no mutes found')
                     
     return df
