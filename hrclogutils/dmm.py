@@ -372,7 +372,7 @@ def changes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','event','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -399,7 +399,7 @@ def changes_to_dataframe(path, macstring=None):
                              
                          
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       mobile_info_operational, mobile_info_located,'','','',''],columns)
+                                       mobile_info_operational, mobile_info_located,'DMM state change',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       
@@ -434,7 +434,7 @@ def txmutes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','event','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -450,7 +450,7 @@ def txmutes_to_dataframe(path, macstring=None):
                          
         
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       '', '','tx mute','','',''],columns)
+                                       '', '','tx mute',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       
@@ -484,7 +484,7 @@ def beam_info_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','event','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -505,7 +505,7 @@ def beam_info_to_dataframe(path, macstring=None):
                      
     
                     row=pd.Series([mobile_info_date, mobile_info_mac,
-                                   '', '','',event,'',''],columns)
+                                   '','',event,''],columns)
                     df = df.append([row],ignore_index=True) 
                 elif "LoggedIn(" in line:
                     date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
@@ -526,7 +526,7 @@ def beam_info_to_dataframe(path, macstring=None):
                      
     
                     row=pd.Series([mobile_info_date, mobile_info_mac,
-                                   '', '','',event,'',''],columns)
+                                   '','',event,''],columns)
                     df = df.append([row],ignore_index=True)
                     
                    

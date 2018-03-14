@@ -52,7 +52,7 @@ def main(argv):
     path = args['path']
     
     
-    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','event','airport']
     dfChanges = dmm.changes_to_dataframe(path, mac)
     
     #df = dmm.mobile_info_to_dataframe(path, mac)
@@ -93,12 +93,12 @@ def main(argv):
                 arrival_known = False
             
             if departure_known:
-                row=pd.Series([departure_utc, mac,'','','','',"departure",from_airport],columns)
+                row=pd.Series([departure_utc, mac,'','',"departure",from_airport],columns)
                 dfChanges = dfChanges.append([row],ignore_index=True)
                 #print("departure " + str(departure_utc))
                 
             if arrival_known:
-                row=pd.Series([arrival_utc, mac,'','','','',"arrival",to_airport],columns)
+                row=pd.Series([arrival_utc, mac,'','',"arrival",to_airport],columns)
                 dfChanges = dfChanges.append([row],ignore_index=True)
                 #print("arrival " + str(arrival_utc))
             
