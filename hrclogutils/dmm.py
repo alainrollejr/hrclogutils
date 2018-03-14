@@ -372,7 +372,7 @@ def changes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','tx muted','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -399,7 +399,7 @@ def changes_to_dataframe(path, macstring=None):
                              
                          
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       mobile_info_operational, mobile_info_located,'','',''],columns)
+                                       mobile_info_operational, mobile_info_located,'','','',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       
@@ -434,7 +434,7 @@ def txmutes_to_dataframe(path, macstring=None):
         
     #print(mac_list_unique)
 
-    columns = ['dateTimes','mac','operational','located','tx muted','flightradar_status','airport']
+    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
     df = pd.DataFrame(columns=columns)
     df = df.fillna(0) # with 0s rather than NaNs
     
@@ -450,7 +450,7 @@ def txmutes_to_dataframe(path, macstring=None):
                          
         
                         row=pd.Series([mobile_info_date, mobile_info_mac,
-                                       '', '','tx mute','',''],columns)
+                                       '', '','tx mute','','',''],columns)
                         df = df.append([row],ignore_index=True)                 
            
       
@@ -460,5 +460,78 @@ def txmutes_to_dataframe(path, macstring=None):
         df['dateTimes'] = df['dateTimes'].dt.round('S')
     else:
         print('no mutes found')
+                    
+    return df
+
+def beam_info_to_dataframe(path, macstring=None):
+    # 18/03/11-23:21:54.618 [I] [ility.DMM.Mobile.Fsm] 00:0d:2e:00:06:74 performs switch to beam 'BEAM_AMZ2_W02_0003' (active-beam: 'BEAM_AMC15_W06_0027')
+    
+    with open(path,"r") as f:
+        #file_content = f.read().rstrip("\n") # if you don't want end of lines
+        file_content = f.read()     
+        
+    """
+        first find all mac addresses
+    """
+    p = re.compile(r'([0-9a-f]{2}(?::[0-9a-f]{2}){5})', re.IGNORECASE)   
+
+    mac_list = re.findall(p, file_content)   
+    
+    if macstring is None:
+        mac_list_unique = set(mac_list) #convert list to a set
+    else:
+        mac_list_unique = [macstring]
+        
+    #print(mac_list_unique)
+
+    columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
+    df = pd.DataFrame(columns=columns)
+    df = df.fillna(0) # with 0s rather than NaNs
+    
+    for line in file_content.splitlines(): 
+        for mac in mac_list_unique:
+            mobile_info_mac = mac
+            if mac in line:
+                if "performs switch to" in line: # a eufemism because NoTx zone is just one possible reason for tx mute
+                    date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
+      
+                    
+                    mobile_info_date = date   
+                    
+                    substrings = line.split("performs")
+                    print(substrings)
+                    event = substrings[1]
+                    #print(event)
+                     
+    
+                    row=pd.Series([mobile_info_date, mobile_info_mac,
+                                   '', '','',event,'',''],columns)
+                    df = df.append([row],ignore_index=True) 
+                elif "LoggedIn(" in line:
+                    date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          
+      
+                    
+                    mobile_info_date = date   
+                    
+                    substrings = line.split("Process [")
+                    print(substrings)
+                    event = substrings[1]
+                    substrings = event.split(']')
+                    event = substrings[0]
+                    print(event)
+                     
+    
+                    row=pd.Series([mobile_info_date, mobile_info_mac,
+                                   '', '','',event,'',''],columns)
+                    df = df.append([row],ignore_index=True)
+                    
+                   
+      
+        
+            
+    if len(df) > 0:                    
+        df['dateTimes'] = df['dateTimes'].dt.round('S')
+    else:
+        print('no beam info found')
                     
     return df
