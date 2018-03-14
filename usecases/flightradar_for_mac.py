@@ -51,6 +51,7 @@ def main(argv):
     
     path = args['path']
     
+    
     columns = ['dateTimes','mac','operational','located','tx muted','beam event','flightradar_status','airport']
     dfChanges = dmm.changes_to_dataframe(path, mac)
     

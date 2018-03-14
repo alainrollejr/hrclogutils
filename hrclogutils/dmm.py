@@ -515,10 +515,14 @@ def beam_info_to_dataframe(path, macstring=None):
                     
                     substrings = line.split("Process [")
                     print(substrings)
-                    event = substrings[1]
-                    substrings = event.split(']')
-                    event = substrings[0]
-                    print(event)
+                    
+                    if len(substrings) > 1:
+                        event = substrings[1]
+                        substrings = event.split(']')
+                        event = substrings[0]
+                        print(event)
+                    else:
+                        event = line
                      
     
                     row=pd.Series([mobile_info_date, mobile_info_mac,
