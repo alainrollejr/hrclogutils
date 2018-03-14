@@ -413,6 +413,9 @@ def changes_to_dataframe(path, macstring=None):
     return df
 
 def txmutes_to_dataframe(path, macstring=None):
+    # txmutes which actually come from modem and encompass ALL mute events (RX lock loss, discrete/SW mute by BC etc)
+    # 18/03/11-18:03:16.191 [D] [bility.DMM.Publisher] Publishing 1 no tx zone changes to 1 subscribers. content="{"changes":[{"00:0d:2e:00:05:c8":{"endTime":1520791112398,"startTime":1520791108250}}],"timestamp":1520791395691,"type":"terminalNoTxZone"}"
+
     with open(path,"r") as f:
         #file_content = f.read().rstrip("\n") # if you don't want end of lines
         file_content = f.read()     
@@ -437,7 +440,7 @@ def txmutes_to_dataframe(path, macstring=None):
     
     for line in file_content.splitlines():
         if "changes" in line:
-            if "terminalNoTxZone" in line:
+            if "terminalNoTxZone" in line: # a eufemism because NoTx zone is just one possible reason for tx mute
                 for mac in mac_list_unique:
                     if mac in line:
                         date = datetime.datetime.strptime(line[0:20],"%y/%m/%d-%H:%M:%S.%f")                          

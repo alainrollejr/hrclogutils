@@ -33,13 +33,21 @@ def main(argv):
     
     parser = argparse.ArgumentParser(description='script to check flight radar data for a terminal')
     
-    parser.add_argument('-m','--mac', help='mac address of terminal, eg -m 00:0d:2e:00:02:81 (no quotes !)', required=True)
+    parser.add_argument('-m','--mac', help='mac address of terminal, eg -m 00:0d:2e:00:02:81 (no quotes !)', required=False)
+    parser.add_argument('-t','--tail', help='tail nr of aircraft eg -t N482UA (no quotes !)', required=False)
     parser.add_argument('-p','--path', help='path to dmm.log.* file', required=False)
     parser.add_argument('-l','--modemlist', help='path to modem_list.csv, which can be fetched via rest_api_all_modems.py', required=True)
     
     args = vars(parser.parse_args())
    
+    path_to_modem_list = args['modemlist']
     mac = args['mac']
+    
+    if mac is None:
+        tail = args['tail']        
+        modem_df = pd.read_csv(path_to_modem_list)  
+        row = modem_df[modem_df['tail']==tail]
+        mac = row.iloc[0]['mac']
     
     path = args['path']
     
@@ -48,7 +56,7 @@ def main(argv):
     
     #df = dmm.mobile_info_to_dataframe(path, mac)
     
-    path_to_modem_list = args['modemlist']
+    
     
     tail =get_flightradar_info_for_mac(mac,path_to_modem_list)
 
@@ -99,9 +107,7 @@ def main(argv):
     # TODO: add beam switch events
     # 18/03/11-23:21:54.618 [I] [ility.DMM.Mobile.Fsm] 00:0d:2e:00:06:74 performs switch to beam 'BEAM_AMZ2_W02_0003' (active-beam: 'BEAM_AMC15_W06_0027')
     
-    # TODO: add no TX zone notifs
-    # which actually come from modem and encompass ALL mute events (RX lock loss, discrete/SW mute by BC etc)
-    # 18/03/11-18:03:16.191 [D] [bility.DMM.Publisher] Publishing 1 no tx zone changes to 1 subscribers. content="{"changes":[{"00:0d:2e:00:05:c8":{"endTime":1520791112398,"startTime":1520791108250}}],"timestamp":1520791395691,"type":"terminalNoTxZone"}"
+ 
     dfMutes = dmm.txmutes_to_dataframe(path, mac)
     
     dfSLA = pd.concat([dfMutes,dfChanges])
