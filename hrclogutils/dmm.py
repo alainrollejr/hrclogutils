@@ -499,7 +499,7 @@ def beam_info_to_dataframe(path, macstring=None):
                     mobile_info_date = date   
                     
                     substrings = line.split("performs")
-                    print(substrings)
+                    #print(substrings)
                     event = substrings[1]
                     #print(event)
                      
@@ -514,13 +514,13 @@ def beam_info_to_dataframe(path, macstring=None):
                     mobile_info_date = date   
                     
                     substrings = line.split("Process [")
-                    print(substrings)
+                    #print(substrings)
                     
                     if len(substrings) > 1:
                         event = substrings[1]
                         substrings = event.split(']')
                         event = substrings[0]
-                        print(event)
+                        #print(event)
                     else:
                         event = line
                      

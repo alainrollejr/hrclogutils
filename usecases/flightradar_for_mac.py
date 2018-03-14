@@ -102,7 +102,7 @@ def main(argv):
                 dfChanges = dfChanges.append([row],ignore_index=True)
                 #print("arrival " + str(arrival_utc))
             
-            print("\n")
+            #print("\n")
             
             
     # TODO: add beam switch events
